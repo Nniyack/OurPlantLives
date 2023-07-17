@@ -34,5 +34,8 @@ export default defineNuxtConfig({
     base64: false,
     fontsPath: '@/assets/fonts',
     preload: true
+  },
+  typescript: {
+    strict: true
   }
 })
