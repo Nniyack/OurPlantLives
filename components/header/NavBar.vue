@@ -3,7 +3,7 @@
     <div
       class="min-w-[30%] basis-6 items-center lg:mt-0 mr-6 text-xl text-green-ui font-medium"
     >
-      OurPlantLives
+      <NuxtLink to="/"> OurPlantLives </NuxtLink>
     </div>
     <div
       :class="` block grow justify-evenly lg:flex lg:visible lg:pr-40  w-auto ${

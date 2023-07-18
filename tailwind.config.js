@@ -13,7 +13,8 @@ module.exports = {
         'green-ui': '#2F5233',
         'green-lime-ui': '#76B947',
         'spearmint': '#94C973',
-        'green-kelly-ui': '#B1D8B7'
+        'green-kelly-ui': '#B1D8B7',
+        'green-dark':'#44675c'
       }
     },
   },
