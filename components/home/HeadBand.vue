@@ -1,12 +1,12 @@
 <template>
   <section
-    class="h-[800px] lg:bg-fixed bg-center bg-cover custom-img items-center justify-center h-screen"
+    class="h-[600px] lg:h-[800px] lg:bg-fixed bg-center bg-cover custom-img items-center justify-center h-screen"
   >
     <div class="container-full">
       <div
         class="text-green-950/[.7] font-bold left-[6%] sm:top-0 lg:top-[300px] flex flex-col w-full lg:absolute delay-200"
       >
-        <div class="mt-40 px-4 lg:mt-0 lg:px-0 flex flex-col">
+        <div class="mt-40 px-7 pb-4 lg:pb-0 lg:mt-0 lg:px-0 flex flex-col">
           <span class="text-lg sm:text-2xl lg:text-6xl lg:pb-[20px]"
             >Une gestion de chaque plante,</span
           >

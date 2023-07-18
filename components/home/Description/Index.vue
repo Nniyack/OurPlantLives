@@ -1,7 +1,9 @@
 <template>
-  <div class="bg-green-dark pt-40">
+  <div class="h-[1240px] md:h-[680px] lg:h-screen bg-green-dark pt-20 lg:pt-40">
     <div id="description" class="h-screen container mx-auto">
-      <div class="text-center text-white text-3xl pb-[160px]">
+      <div
+        class="text-center text-white text-xl pb-[65px] lg:text-3xl lg:pb-[160px]"
+      >
         " Créer et renseigner les fiches de vos plantes "
       </div>
       <div class="">
