@@ -1,6 +1,7 @@
 <template>
   <HomeHeadBand />
   <HomeDescription />
+  <Footer />
 </template>
 
 <script lang="ts">

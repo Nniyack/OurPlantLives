@@ -1,6 +1,6 @@
 <template>
   <section
-    class="h-[800px] mb-40 lg:bg-fixed bg-center bg-cover custom-img items-center justify-center h-screen"
+    class="h-[800px] lg:bg-fixed bg-center bg-cover custom-img items-center justify-center h-screen"
   >
     <div class="container-full">
       <div
