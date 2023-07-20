@@ -1,16 +1,18 @@
 <template>
-  <div class="shadow-lg rounded-md mx-4">
+  <div v-if="imageSrc" class="shadow-lg rounded-md mx-4 mb-4 z-1">
     <div v-if="!createPlant">
       <img
-        src="../../assets/Images/rempotage.jpg"
-        alt="mug"
+        :src="imageSrc.src"
+        :alt="imageSrc.alt"
         class="h-40 w-full object-cover rounded-t-md"
       />
       <div class="p-4 grid justify-items-center">
         <div class="flex justify-evenly py-4 w-full">
-          <p class="text-green-lime-ui mt-2">PLANTATUS GENERAT</p>
+          <p class="text-green-lime-ui mt-2">
+            {{ namePlant }}
+          </p>
           <div class="text-emerald-500 hover:text-emerald-400 cursor-pointer">
-            <EllipsisHorizontalCircleIcon class="h-10 w-10" />
+            <EllipsisHorizontalCircleIcon class="h-6 w-6 mt-2" />
           </div>
         </div>
         <div class="flex justify-around w-full">
@@ -24,7 +26,7 @@
     </div>
     <div v-if="createPlant">
       <div
-        class="p-4 grid justify-items-center cursor-pointer text-green-kelly-ui hover:text-spearmint"
+        class="p-10 grid justify-items-center cursor-pointer text-green-kelly-ui hover:text-spearmint"
       >
         <p class="py-9 font-bold">AJOUTER UNE PLANTE</p>
         <PlusCircleIcon class="h-20 w-20" />
@@ -34,11 +36,18 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, ref } from "vue";
+  import type { PropType } from "vue";
+
   import {
     PlusCircleIcon,
     EllipsisHorizontalCircleIcon,
   } from "@heroicons/vue/24/outline";
+
+  interface ImageSrc {
+    src?: string;
+    alt?: string;
+  }
 
   export default defineComponent({
     components: {
@@ -46,10 +55,14 @@
       EllipsisHorizontalCircleIcon,
     },
     props: {
-      createPlant: { type: Boolean },
+      createPlant: Boolean,
+      imageSrc: Object as PropType<ImageSrc>,
+      namePlant: String,
     },
-    setup() {
-      return {};
+    setup(props: any) {
+      const { imageSrc, namePlant } = props;
+
+      return { imageSrc, namePlant };
     },
   });
 </script>

@@ -1,7 +1,12 @@
 <template>
-  <div class="h-screen container mx-auto py-20">
+  <div class="h-full container mx-auto py-20">
     <div class="flex justify-between mb-6">
       <label class="block">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+          <svg class="h-5 w-5 fill-slate-300" viewBox="0 0 20 20">
+            <!-- ... -->
+          </svg>
+        </span>
         <input
           type="email"
           name="email"
@@ -9,6 +14,7 @@
           placeholder="Recherche ..."
         />
       </label>
+      <CoreAutocomplete :dataField="fakeDataCards" label="namePlant" />
       <label class="block"
         ><select
           name="filter"
@@ -23,7 +29,13 @@
         class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
         <MyplantsCard :createPlant="true" />
-        <MyplantsCard :createPlant="false" />
+        <MyplantsCard
+          v-for="item in fakeDataCards"
+          :key="uuidv4()"
+          :namePlant="item.namePlant"
+          :imageSrc="item.image"
+          :createPlant="false"
+        />
       </div>
     </section>
   </div>
@@ -31,10 +43,53 @@
 
 <script lang="ts">
   import { defineComponent } from "vue";
+  import { v4 as uuidv4 } from "uuid";
 
   export default defineComponent({
     setup() {
-      return {};
+      const fakeDataCards = [
+        {
+          namePlant: "Plantatus regulus 1",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus notarius elegatus rogos moultivaz",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus 3",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus 4",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus 5",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus 6",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus 7",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+        {
+          namePlant: "Plantatus regulus 8",
+          image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+          createPlant: false,
+        },
+      ];
+      return { fakeDataCards, uuidv4 };
     },
   });
 </script>

@@ -39,11 +39,10 @@
   export default defineComponent({
     props: {
       imageSrc: Object as PropType<ImageSrc>,
-      direction: { type: String },
+      direction: String,
     },
     setup(props) {
       const { imageSrc, direction } = props;
-      console.log(imageSrc);
       return { imageSrc, direction };
     },
   });
