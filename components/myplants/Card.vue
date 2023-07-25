@@ -1,5 +1,5 @@
 <template>
-  <div v-if="imageSrc" class="shadow-lg rounded-md mx-4 mb-4 z-1">
+  <div class="shadow-lg rounded-md mx-4 mb-4 z-1">
     <div v-if="!createPlant">
       <img
         :src="imageSrc.src"
@@ -8,10 +8,10 @@
       />
       <div class="p-4 grid justify-items-center">
         <div class="flex justify-evenly py-4 w-full">
-          <p class="text-green-lime-ui mt-2">
+          <p class="text-green-lime-ui mt-2 line-clamp-2">
             {{ namePlant }}
           </p>
-          <div class="text-emerald-500 hover:text-emerald-400 cursor-pointer">
+          <div class="text-gray-500 hover:text-emerald-400 cursor-pointer">
             <EllipsisHorizontalCircleIcon class="h-6 w-6 mt-2" />
           </div>
         </div>
@@ -36,8 +36,9 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from "vue";
+  import { defineComponent, watch } from "vue";
   import type { PropType } from "vue";
+  import { useImage } from "@vueuse/core";
 
   import {
     PlusCircleIcon,

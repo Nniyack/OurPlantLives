@@ -2,11 +2,6 @@
   <div class="h-full container mx-auto py-20">
     <div class="flex justify-between mb-6">
       <label class="block">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-          <svg class="h-5 w-5 fill-slate-300" viewBox="0 0 20 20">
-            <!-- ... -->
-          </svg>
-        </span>
         <input
           type="email"
           name="email"
@@ -14,7 +9,13 @@
           placeholder="Recherche ..."
         />
       </label>
-      <CoreAutocomplete :dataField="fakeDataCards" label="namePlant" />
+      <CoreAutocomplete
+        :dataField="fakeDataCards"
+        name="searchYourPlant"
+        label="namePlant"
+        @returnLiveObject="selectResultLiveSearchData"
+        @returnObject="selectResultLiveSearchData"
+      />
       <label class="block"
         ><select
           name="filter"
@@ -24,13 +25,14 @@
         </select></label
       >
     </div>
+    <span v-if="loadingAllData">LOADING</span>
     <section class="max-w-7xl mx-auto px-4 py-10">
       <div
         class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
         <MyplantsCard :createPlant="true" />
         <MyplantsCard
-          v-for="item in fakeDataCards"
+          v-for="item in dataListPlant"
           :key="uuidv4()"
           :namePlant="item.namePlant"
           :imageSrc="item.image"
@@ -42,54 +44,84 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, ref, onBeforeMount } from "vue";
   import { v4 as uuidv4 } from "uuid";
 
   export default defineComponent({
     setup() {
       const fakeDataCards = [
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 1",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus notarius elegatus rogos moultivaz",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 3",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 4",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 5",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 6",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 7",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
         {
+          id: uuidv4(),
           namePlant: "Plantatus regulus 8",
           image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
           createPlant: false,
         },
       ];
-      return { fakeDataCards, uuidv4 };
+      const loadingAllData = ref(false);
+      const dataListPlant = ref(fakeDataCards);
+
+      const selectResultLiveSearchData = (value: any) => {
+        loadingAllData.value = true;
+        // if null or empty reload all data plants
+        if ([null, ""].includes(value)) dataListPlant.value = fakeDataCards;
+        // if it's an ID
+        else if (typeof value === "string")
+          dataListPlant.value = fakeDataCards.filter(
+            (item: any): any => item.id === value
+          );
+        else dataListPlant.value = value;
+        loadingAllData.value = false;
+      };
+
+      return {
+        fakeDataCards,
+        uuidv4,
+        selectResultLiveSearchData,
+        dataListPlant,
+        loadingAllData,
+      };
     },
   });
 </script>
