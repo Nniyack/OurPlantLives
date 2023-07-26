@@ -20,7 +20,7 @@
     <div v-on:focusout="outsideClick">
       <ul
         v-if="openListResultsSearch"
-        class="list-none text-sm mt-2 border absolute z-2 drop-shadow-lg max-h-[300px] w-[300px] overflow-auto field-search-content"
+        class="list-none text-sm mt-2 border absolute z-10 drop-shadow-lg max-h-[300px] w-[300px] overflow-auto field-search-content"
       >
         <li
           v-for="item in resultDataFiltered"
@@ -40,17 +40,11 @@
   import { v4 as uuidv4 } from "uuid";
   import { XMarkIcon } from "@heroicons/vue/24/outline";
 
-  interface OptionsField {
-    src?: string;
-    alt?: string;
-  }
-
   export default defineComponent({
     props: {
       name: { type: String, required: true },
       dataField: { type: Array, required: true },
       label: { type: String, required: true },
-      options: Object as PropType<OptionsField>,
     },
     components: {
       XMarkIcon,

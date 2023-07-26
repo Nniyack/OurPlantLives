@@ -24,9 +24,9 @@
         </div>
       </div>
     </div>
-    <div v-if="createPlant">
+    <div v-if="createPlant" class="bg-green-kelly-ui">
       <div
-        class="p-10 grid justify-items-center cursor-pointer text-green-kelly-ui hover:text-spearmint"
+        class="p-10 grid justify-items-center cursor-pointer text-white hover:text-spearmint"
       >
         <p class="py-9 font-bold">AJOUTER UNE PLANTE</p>
         <PlusCircleIcon class="h-20 w-20" />
@@ -38,7 +38,6 @@
 <script lang="ts">
   import { defineComponent, watch } from "vue";
   import type { PropType } from "vue";
-  import { useImage } from "@vueuse/core";
 
   import {
     PlusCircleIcon,
