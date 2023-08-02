@@ -9,7 +9,7 @@
       </span>
       <input
         type="text"
-        :name="props.name"
+        :name="nameProps"
         class="mt-1 pr-9 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-[300px] rounded-md sm:text-sm focus:ring-1"
         placeholder="Recherche ..."
         :value="fieldValue"
@@ -25,7 +25,7 @@
         <li
           v-for="item in resultDataFiltered"
           :key="uuidv4()"
-          class="p-3 cursor-pointer bg-white hover:bg-green-kelly-ui hover:text-white"
+          class="p-3 cursor-pointer bg-white hover:bg-green-kelly-ui hover:text-white li-list"
           @click="handleCLick(item)"
         >
           {{ item[label] }}
@@ -50,6 +50,7 @@
       XMarkIcon,
     },
     setup(props: any, context: any) {
+      const { name: nameProps } = props;
       const autocompleteField = ref(null);
       const openListResultsSearch = ref(false);
       const resultDataFiltered = ref([]);
@@ -81,11 +82,6 @@
         openListResultsSearch.value = dataFiltered.length > 0;
       };
 
-      onClickOutside(
-        autocompleteField,
-        () => (openListResultsSearch.value = false)
-      );
-
       const handleCLick = (objectItem: any) => {
         openListResultsSearch.value = false;
         fieldValue.value = objectItem[props.label];
@@ -105,6 +101,7 @@
 
       return {
         props,
+        nameProps,
         inputField,
         resultDataFiltered,
         uuidv4,

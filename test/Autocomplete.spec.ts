@@ -1,36 +1,51 @@
-import { describe, it, expect } from 'vitest'
-import { mount } from '@vue/test-utils'
-import { v4 as uuidv4 } from "uuid";
+import { describe, it, expect, beforeEach, test } from 'vitest'
+import { shallowMount } from '@vue/test-utils'
+import { plantResponse } from './Plant'
 
 import Autocomplete from '../components/core/Autocomplete.vue'
 
 describe('Autocomplete field', () => {
-  it('Create instance', () => {
-    expect(Autocomplete).toBeTruthy()
-  })
-  it('test props', () => {
+  let wrapper: any;
 
-    const wrapper = mount(Autocomplete, {
+  const textName = 'Name Autocomplete'
+  const textLabel = 'Label Autocomplete'
+
+  beforeEach(() => {
+    wrapper = shallowMount(Autocomplete, {
       props: {
-        name: "Name Autocomplete",
-        dataField: [
-          {
-            id: uuidv4(),
-            namePlant: "Plantatus regulus 1",
-            image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
-            createPlant: false,
-          },
-          {
-            id: uuidv4(),
-            namePlant: "Plantatus regulus notarius elegatus rogos moultivaz",
-            image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
-            createPlant: false,
-          },
-        ],
-        label: "namePlant",
+        name: textName,
+        dataField: plantResponse,
+        label: textLabel,
       },
     });
-
-    expect(wrapper.html()).toContain("Name Autocomplete");
+  });
+  test('snapshot UI testing', () => {
+    expect(wrapper.text()).toMatchSnapshot()
   })
+
+  it('test props', () => {
+    expect(wrapper.props().name).toBe(textName);
+    expect(wrapper.props().label).toBe(textLabel);
+  })
+
+  test('test input ', async () => {
+    const textInput = wrapper.find('input[type="text"]')
+
+    expect(textInput.exists()).toBe(true)
+    expect(textInput.element.name).toBe(textName)
+
+  })
+
+  test('test setValue input ', async () => {
+    const textInput = wrapper.find('input[type="text"]')
+    await textInput.setValue('Plantatus regulus 1')
+    textInput.trigger('input')
+
+    expect(wrapper.find('input[type="text"]').element.value).toBe('Plantatus regulus 1')
+
+
+    const li = wrapper.findAll('.li-list')
+    console.log(li)
+  })
+
 })
