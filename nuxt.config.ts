@@ -22,6 +22,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/google-fonts',
     'nuxt-icon',
+    '@vueuse/nuxt',
   ],
   plugins: [
     { src: '~/plugins/scroll-behavior.client.ts', mode: 'client' }
