@@ -1,6 +1,6 @@
 <template>
   <div class="h-full min-h-screen container mx-auto py-20">
-    <div class="flex justify-between mb-6">
+    <div class="flex justify-between mb-6 items-center">
       <label class="block">
         <input
           type="email"
@@ -10,10 +10,10 @@
         />
       </label>
       <CoreAutocomplete
-        :dataField="fakeDataCards"
+        class="mt-1"
+        :dataLoad="fakeDataCards"
         name="searchYourPlant"
         keyLabelShowed="namePlant"
-        @returnLiveObject="selectResultLiveSearchData"
         @returnObject="selectResultLiveSearchData"
       />
       <label class="block"
@@ -152,21 +152,25 @@
       const loadingAllData = ref(false);
       const dataListPlant = ref(fakeDataCards);
       const numPerPage = ref([]);
+
       onMounted(() => {
         dataListPlant.value = fakeDataCards;
         console.log(fakeDataCards);
         // numPerPage.value = fakeDataCards.length
       });
-      const selectResultLiveSearchData = (value: any) => {
+
+      const selectResultLiveSearchData = (values: any) => {
         loadingAllData.value = true;
+
+        if (values === null) {
+          dataListPlant.value = [];
+          loadingAllData.value = true;
+        }
         // if null or empty reload all data plants
-        if ([null, ""].includes(value)) dataListPlant.value = fakeDataCards;
+        else if (values.length === 0) dataListPlant.value = fakeDataCards;
         // if it's an ID
-        else if (typeof value === "string")
-          dataListPlant.value = fakeDataCards.filter(
-            (item: any): any => item.id === value
-          );
-        else dataListPlant.value = value;
+        else dataListPlant.value = values;
+
         setTimeout(() => {
           loadingAllData.value = false;
         }, 1000);
