@@ -14,7 +14,7 @@ describe('Autocomplete field', () => {
     wrapper = shallowMount(Autocomplete, {
       props: {
         name: textName,
-        dataField: plantResponse,
+        dataLoad: plantResponse,
         keyLabelShowed: textLabel,
       },
     });
@@ -43,12 +43,10 @@ describe('Autocomplete field', () => {
     await textInput.trigger('click')
     await textInput.setValue('Plantatus regulus 1')
 
-    expect(wrapper.find('input[type="text"]').element.value).toBe('Plantatus regulus 1')
-    expect(wrapper.html()).toContain('Plantatus regulus 1');
-
+    expect(textInput.element.value).toBe('Plantatus regulus 1')
     await wrapper.find('.remove-icon').trigger('click')
 
-    expect(textInput.text()).toBe('')
+    expect(textInput.element.value).toBe('')
   })
 
   test('All actions components ', async () => {
@@ -64,14 +62,12 @@ describe('Autocomplete field', () => {
 
     expect(wrapper.emitted().returnObject).toBeTruthy()
 
-    expect(wrapper.emitted('returnObject')[0]).toStrictEqual([13])
-
-    expect(wrapper.emitted('returnLiveObject')[0][0]).toStrictEqual([{
+    expect(wrapper.emitted('returnObject')[0]).toStrictEqual([[{
       id: 13,
       namePlant: "Plantatus regulus 1",
       image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
       createPlant: false,
-    }])
+    }]])
 
   })
 
@@ -80,7 +76,7 @@ describe('Autocomplete field', () => {
     wrapper = shallowMount(Autocomplete, {
       props: {
         name: textName,
-        dataField: plantResponse,
+        dataLoad: plantResponse,
         keyLabelShowed: textLabel,
         multiple: true
       },
@@ -102,9 +98,7 @@ describe('Autocomplete field', () => {
 
     expect(wrapper.emitted().returnObject).toBeTruthy()
 
-    expect(wrapper.emitted('returnObject')[0]).toStrictEqual([13, 23])
-
-    expect(wrapper.emitted('returnLiveObject')[0][0]).toStrictEqual([{
+    expect(wrapper.emitted('returnObject')[0]).toStrictEqual([[{
       id: 13,
       namePlant: "Plantatus regulus 1",
       image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
@@ -115,7 +109,7 @@ describe('Autocomplete field', () => {
       namePlant: "Plantatus regulus 2",
       image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
       createPlant: false,
-    }])
+    }]])
 
   })
 

@@ -25,7 +25,7 @@
       </label>
       <div class="px-1 sm:text-sm flex flex-wrap">
         <div
-          class="flex items-center p-1 rounded-md border border-slate-300 w-fit m-1"
+          class="flex items-center p-1 rounded-md border border-slate-300 w-fit m-1 pill"
           v-for="item in fieldValue"
           :key="uuidv4()"
         >
@@ -65,7 +65,6 @@
       name: { type: String, required: true },
       dataLoad: { type: Array, required: true },
       keyLabelShowed: { type: String, required: true },
-      multiple: Boolean,
     },
     components: {
       XMarkIcon,
@@ -81,7 +80,7 @@
 
       const inputField = ($event: any) => {
         if ($event.target.value === "") removeValueField();
-
+        console.log("valiu FIELD", $event.target.value);
         searchedValue.value = $event.target.value;
 
         const dataFiltered = loadedData.value.filter((item: any) => {
