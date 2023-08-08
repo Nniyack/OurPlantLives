@@ -5,7 +5,10 @@
         v-if="![null, ''].includes(fieldValue)"
         class="absolute inset-y-0 right-2 flex items-center pl-2"
       >
-        <XMarkIcon class="h-5 w-5 cursor-pointer" @click="removeValueField" />
+        <XMarkIcon
+          class="h-5 w-5 cursor-pointer remove-icon"
+          @click="removeValueField"
+        />
       </span>
       <input
         type="text"
@@ -17,6 +20,24 @@
         tabindex="1"
       />
     </label>
+    <!-- <select
+      v-if="openListResultsSearch"
+      :size="resultDataFiltered.length > 6 ? 6 : resultDataFiltered.length"
+      class="absolute z-10 drop-shadow-lg max-h-[300px] w-[300px] mt-1"
+    >
+      <option v-if="resultDataFiltered.length === 0" class="p-1" value="">
+        t
+      </option>
+      <option
+        v-for="item in resultDataFiltered"
+        class="p-4 hover:bg-green-kelly-ui cursor-pointer"
+        :key="uuidv4()"
+        @click="handleCLick(item)"
+      >
+        {{ item[label] }}
+      </option>
+    </select> -->
+
     <div v-on:focusout="outsideClick">
       <ul
         v-if="openListResultsSearch"
@@ -28,7 +49,7 @@
           class="p-3 cursor-pointer bg-white hover:bg-green-kelly-ui hover:text-white li-list"
           @click="handleCLick(item)"
         >
-          {{ item[label] }}
+          {{ item[keyLabelShowed] }}
         </li>
       </ul>
     </div>
@@ -44,7 +65,7 @@
     props: {
       name: { type: String, required: true },
       dataField: { type: Array, required: true },
-      label: { type: String, required: true },
+      keyLabelShowed: { type: String, required: true },
     },
     components: {
       XMarkIcon,
@@ -73,19 +94,20 @@
               return true;
             return false;
           });
-          if (searchInItem.length > 0) return item[props.label];
+          if (searchInItem.length > 0) return item[props.keyLabelShowed];
           return false;
         });
 
         resultDataFiltered.value = dataFiltered;
         context.emit("returnLiveObject", dataFiltered);
+
         openListResultsSearch.value = dataFiltered.length > 0;
       };
 
       const handleCLick = (objectItem: any) => {
         openListResultsSearch.value = false;
         fieldValue.value = objectItem[props.label];
-        context.emit("returnObject", objectItem["id"]);
+        context.emit("returnObject", objectItem.id);
       };
 
       const removeValueField = () => {
