@@ -9,7 +9,7 @@ export const plantResponse = [
   },
   {
     id: 23,
-    namePlant: "Plantatus regulus notarius",
+    namePlant: "Plantatus regulus 2",
     image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
     createPlant: false,
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="h-full min-h-screen container mx-auto py-20">
-    <div class="flex justify-between mb-6">
+    <div class="flex justify-between mb-6 items-center">
       <label class="block">
         <input
           type="email"
@@ -10,9 +10,11 @@
         />
       </label>
       <CoreAutocomplete
-        :dataField="fakeDataCards"
+        class="mt-1"
+        :dataLoad="fakeDataCards"
         name="searchYourPlant"
         keyLabelShowed="namePlant"
+        :multiple="true"
         @returnLiveObject="selectResultLiveSearchData"
         @returnObject="selectResultLiveSearchData"
       />
