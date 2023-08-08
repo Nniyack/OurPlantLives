@@ -1,31 +1,11 @@
 <template>
   <div ref="autocompleteField" class="w-full">
-    <!-- <label class="relative block">
-      <span
-        v-if="![null, ''].includes(fieldValue)"
-        class="absolute inset-y-0 right-2 flex items-center pl-2"
-      >
-        <XMarkIcon
-          class="h-5 w-5 cursor-pointer remove-icon"
-          @click="removeValueField"
-        />
-      </span>
-      <input
-        type="text"
-        :name="nameProps"
-        class="mt-1 pr-9 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-[300px] rounded-md sm:text-sm focus:ring-1"
-        placeholder="Recherche ..."
-        :value="fieldValue"
-        @input="inputField"
-        tabindex="1"
-      />
-    </label> -->
     <div
       class="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 rounded-md focus:ring-1"
     >
       <label class="relative block">
         <span
-          v-if="![null, ''].includes(fieldValue)"
+          v-if="![null, ''].includes(searchedValue)"
           class="absolute inset-y-0 right-2 flex items-center pl-2"
         >
           <XMarkIcon
@@ -43,7 +23,7 @@
           tabindex="1"
         />
       </label>
-      <div class="px-3 sm:text-sm flex flex-wrap">
+      <div class="px-1 sm:text-sm flex flex-wrap">
         <div
           class="flex items-center p-1 rounded-md border border-slate-300 w-fit m-1"
           v-for="item in fieldValue"
@@ -91,7 +71,7 @@
       XMarkIcon,
     },
     setup(props: any, context: any) {
-      const { name: nameProps, multiple: multipleSelect } = props;
+      const { name: nameProps } = props;
       const autocompleteField = ref(null);
       const openListResultsSearch = ref(false);
       const loadedData = ref(props.dataLoad);
@@ -119,11 +99,12 @@
           if (searchInItem.length > 0) return item[props.keyLabelShowed];
           return false;
         });
-        console.log(dataFiltered);
-        resultDataFiltered.value = dataFiltered;
-        context.emit("returnLiveObject", dataFiltered);
+        if (dataFiltered.length === 0) context.emit("returnObject", null);
 
-        openListResultsSearch.value = dataFiltered.length > 0;
+        resultDataFiltered.value = dataFiltered;
+
+        openListResultsSearch.value =
+          dataFiltered.length > 0 && $event.target.value !== "";
       };
 
       const handleCLick = (objectItem: any) => {
@@ -133,8 +114,7 @@
         loadedData.value = loadedData.value.filter(
           (item: any) => item.id !== objectItem.id
         );
-        console.log(resultDataFiltered.value);
-        context.emit("returnObject", objectItem.id);
+        context.emit("returnObject", fieldValue.value);
       };
 
       const removeValueField = () => {
@@ -142,13 +122,14 @@
         resultDataFiltered.value = [];
         searchedValue.value = null;
         openListResultsSearch.value = false;
-        context.emit("returnObject", null);
+        context.emit("returnObject", []);
       };
 
       const removePills = (id: Number) => {
         fieldValue.value = fieldValue.value.filter((pill: any) => pill.id !== id);
         const removedPill = props.dataLoad.find((item: any) => item.id === id);
         loadedData.value.push(removedPill);
+        context.emit("returnObject", fieldValue.value);
       };
 
       const outsideClick = () => {
