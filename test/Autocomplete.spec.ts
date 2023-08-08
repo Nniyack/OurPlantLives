@@ -8,16 +8,17 @@ describe('Autocomplete field', () => {
   let wrapper: any;
 
   const textName = 'Name Autocomplete'
-  const textLabel = 'Label Autocomplete'
+  const textLabel = 'namePlant'
 
   beforeEach(() => {
     wrapper = shallowMount(Autocomplete, {
       props: {
         name: textName,
         dataField: plantResponse,
-        label: textLabel,
+        keyLabelShowed: textLabel,
       },
     });
+
   });
   test('snapshot UI testing', () => {
     expect(wrapper.text()).toMatchSnapshot()
@@ -25,7 +26,7 @@ describe('Autocomplete field', () => {
 
   it('test props', () => {
     expect(wrapper.props().name).toBe(textName);
-    expect(wrapper.props().label).toBe(textLabel);
+    expect(wrapper.props().keyLabelShowed).toBe(textLabel);
   })
 
   test('test input ', async () => {
@@ -36,16 +37,42 @@ describe('Autocomplete field', () => {
 
   })
 
-  test('test setValue input ', async () => {
+  test('Remove value field', async () => {
     const textInput = wrapper.find('input[type="text"]')
+
+    await textInput.trigger('click')
     await textInput.setValue('Plantatus regulus 1')
-    textInput.trigger('input')
 
     expect(wrapper.find('input[type="text"]').element.value).toBe('Plantatus regulus 1')
+    expect(wrapper.html()).toContain('Plantatus regulus 1');
 
+    await wrapper.find('.remove-icon').trigger('click')
 
-    const li = wrapper.findAll('.li-list')
-    console.log(li)
+    expect(textInput.text()).toBe('')
+  })
+
+  test('All actions components ', async () => {
+    const textInput = wrapper.find('input[type="text"]')
+
+    await textInput.trigger('click')
+    await textInput.setValue('Plantatus regulus 1')
+
+    expect(wrapper.find('input[type="text"]').element.value).toBe('Plantatus regulus 1')
+    expect(wrapper.html()).toContain('Plantatus regulus 1');
+
+    await wrapper.findAll('li').at(0).trigger('click')
+
+    expect(wrapper.emitted().returnObject).toBeTruthy()
+
+    expect(wrapper.emitted('returnObject')[0]).toStrictEqual([13])
+
+    expect(wrapper.emitted('returnLiveObject')[0][0]).toStrictEqual([{
+      id: 13,
+      namePlant: "Plantatus regulus 1",
+      image: { src: "../../assets/Images/rempotage.jpg", alt: "plantes" },
+      createPlant: false,
+    }])
+
   })
 
 })

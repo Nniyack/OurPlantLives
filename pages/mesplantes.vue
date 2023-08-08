@@ -12,7 +12,7 @@
       <CoreAutocomplete
         :dataField="fakeDataCards"
         name="searchYourPlant"
-        label="namePlant"
+        keyLabelShowed="namePlant"
         @returnLiveObject="selectResultLiveSearchData"
         @returnObject="selectResultLiveSearchData"
       />
