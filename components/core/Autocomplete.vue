@@ -31,7 +31,7 @@
         >
           {{ item[keyLabelShowed] }}
           <XMarkIcon
-            class="h-4 w-4 ml-1 cursor-pointer remove-icon text-spearmint"
+            class="h-4 w-4 ml-1 cursor-pointer remove-icon text-spearmint remove-pill"
             @click="removePills(item.id)"
           />
         </div>
@@ -80,7 +80,6 @@
 
       const inputField = ($event: any) => {
         if ($event.target.value === "") removeValueField();
-        console.log("valiu FIELD", $event.target.value);
         searchedValue.value = $event.target.value;
 
         const dataFiltered = loadedData.value.filter((item: any) => {
