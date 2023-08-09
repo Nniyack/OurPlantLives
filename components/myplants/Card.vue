@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-lg rounded-md mx-4 mb-4 z-1">
+  <div v-if="!loading" class="shadow-lg rounded-md mx-4 mb-4 z-1 min-h-[336px]">
     <div v-if="!createPlant">
       <img
         :src="imageSrc.src"
@@ -33,6 +33,15 @@
       </div>
     </div>
   </div>
+  <div v-if="loading" class="animate-pulse shadow-lg rounded-md mx-4 mb-4 z-1">
+    <div class="h-[336px]">
+      <div class="w-full h-[200px] bg-slate-200"></div>
+      <div class="p-4 grid justify-items-center space-y-10">
+        <div class="flex justify-evenly w-full h-3 bg-slate-200 rounded"></div>
+        <div class="flex justify-around w-[100px] bg-slate-200 h-10"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -58,11 +67,12 @@
       createPlant: Boolean,
       imageSrc: Object as PropType<ImageSrc>,
       namePlant: String,
+      loading: Boolean,
     },
     setup(props: any) {
-      const { imageSrc, namePlant } = props;
+      const { imageSrc, namePlant, loading } = props;
 
-      return { imageSrc, namePlant };
+      return { imageSrc, namePlant, loading };
     },
   });
 </script>

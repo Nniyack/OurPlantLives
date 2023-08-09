@@ -1,16 +1,24 @@
 <template>
   <div class="h-full min-h-screen container mx-auto py-20">
-    <div class="flex justify-between mb-6 items-center">
-      <label class="block">
-        <input
-          type="email"
-          name="email"
-          class="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-          placeholder="Recherche ..."
-        />
-      </label>
+    <div class="grid grid-cols-5 gap-3 p-4 bg-green-kelly-ui">
+      <label class="block"
+        ><select
+          name="filterBy"
+          class="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-green-500 focus:ring-green-500 block w-full rounded-md sm:text-sm focus:ring-1"
+          @change="selectFilters($event, 'order')"
+        >
+          <option
+            class="bg-green-500"
+            v-for="item in fakeFilter"
+            :key="uuidv4()"
+            :value="item.slug"
+          >
+            {{ item.label }}
+          </option>
+        </select></label
+      >
       <CoreAutocomplete
-        class="mt-1"
+        class="mt-1 col-span-3"
         :dataLoad="fakeDataCards"
         name="searchYourPlant"
         keyLabelShowed="namePlant"
@@ -19,22 +27,23 @@
       <label class="block"
         ><select
           name="numPerPage"
-          class="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+          class="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-green-500 focus:ring-green-500 block w-full rounded-md sm:text-sm focus:ring-1"
+          @change="selectFilters($event, 'numPerPage')"
         >
-          <option name="3">3</option>
+          <option v-for="item in numPerPage" :key="uuidv4()">{{ item }}</option>
         </select></label
       >
     </div>
-    <div
-      v-if="loadingAllData"
+    <!-- <div
+      v-show="loadingAllData"
       class="flex w-full h-screen justify-center items-center"
     >
       <div
         class="animate-spin w-16 h-16 border-[5px] rounded-full border-slate-200 border-r-spearmint mt-10"
       ></div>
-    </div>
+    </div> -->
 
-    <section v-show="!loadingAllData" class="max-w-7xl mx-auto px-4 py-10">
+    <section class="max-w-7xl mx-auto px-4 py-10">
       <div
         class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
@@ -45,6 +54,7 @@
           :namePlant="item.namePlant"
           :imageSrc="item.image"
           :createPlant="false"
+          :loading="loadingAllData"
         />
       </div>
     </section>
@@ -149,14 +159,27 @@
           createPlant: false,
         },
       ];
+      const fakeFilter = [
+        { label: "de A à Z", slug: "order_by_asc" },
+        { label: "de Z à A", slug: "order_by_desc" },
+        { label: "les plus récents", slug: "order_by_time" },
+        { label: "les favoris", slug: "order_by_favoris" },
+      ];
       const loadingAllData = ref(false);
       const dataListPlant = ref(fakeDataCards);
-      const numPerPage = ref([]);
+      const dataFilterBy = ref(fakeFilter);
+      const numPerPage = ref([] as Number[]);
 
       onMounted(() => {
         dataListPlant.value = fakeDataCards;
         console.log(fakeDataCards);
-        // numPerPage.value = fakeDataCards.length
+        const nbPage = Math.ceil(fakeDataCards.length / 11);
+        let arrayPage: Array<number> = [];
+        for (let i = 0; i < nbPage; i++) {
+          arrayPage.push(i + 1);
+        }
+
+        numPerPage.value = arrayPage;
       });
 
       const selectResultLiveSearchData = (values: any) => {
@@ -176,12 +199,23 @@
         }, 1000);
       };
 
+      const selectFilters = ($event: any, field: String) => {
+        loadingAllData.value = true;
+        if (field === "order") console.log($event.target.value);
+        if (field === "numPerPage") console.log($event.target.value);
+        setTimeout(() => {
+          loadingAllData.value = false;
+        }, 1000);
+      };
       return {
         fakeDataCards,
+        fakeFilter,
         uuidv4,
         selectResultLiveSearchData,
         dataListPlant,
+        numPerPage,
         loadingAllData,
+        selectFilters,
       };
     },
   });
