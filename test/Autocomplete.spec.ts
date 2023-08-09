@@ -71,7 +71,7 @@ describe('Autocomplete field', () => {
 
   })
 
-  test('Select Multiple ', async () => {
+  test('Select Multiple and remove a pill', async () => {
 
     wrapper = shallowMount(Autocomplete, {
       props: {
@@ -83,6 +83,7 @@ describe('Autocomplete field', () => {
     });
 
     const textInput = wrapper.find('input[type="text"]')
+
     const selectOption = async (value: string) => {
       await textInput.trigger('click')
       await textInput.setValue(value)
@@ -111,6 +112,15 @@ describe('Autocomplete field', () => {
       createPlant: false,
     }]])
 
+    expect(wrapper.html()).toContain('Plantatus regulus 2');
+    expect(wrapper.html()).toContain('Plantatus regulus 1');
+
+    // Remove first pill
+    const pills = wrapper.findAll('.pill')
+    await pills.at(0).find('.remove-pill').trigger('click')
+
+    expect(wrapper.findAll('.pill').length).toBe(1);
+    expect(wrapper.html()).toContain('Plantatus regulus 2');
   })
 
 })
