@@ -34,16 +34,16 @@
         </select></label
       >
     </div>
-    <div
+    <!-- <div
       v-show="loadingAllData"
       class="flex w-full h-screen justify-center items-center"
     >
       <div
         class="animate-spin w-16 h-16 border-[5px] rounded-full border-slate-200 border-r-spearmint mt-10"
       ></div>
-    </div>
+    </div> -->
 
-    <section v-show="!loadingAllData" class="max-w-7xl mx-auto px-4 py-10">
+    <section class="max-w-7xl mx-auto px-4 py-10">
       <div
         class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
@@ -54,6 +54,7 @@
           :namePlant="item.namePlant"
           :imageSrc="item.image"
           :createPlant="false"
+          :loading="loadingAllData"
         />
       </div>
     </section>
