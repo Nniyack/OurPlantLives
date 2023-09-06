@@ -25,6 +25,7 @@
         >
           <Form
             @submit="onSubmit"
+            :validation-schema="inscriptionSchema"
             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
           >
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -44,22 +45,37 @@
                     <b>Bienvenue !</b>
                   </h2>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
-                    <label class="relative block text-slate-500">
-                      <span>Prénom *</span>
-                      <Field
-                        type="text"
-                        name="first"
-                        class="pr-9 px-3 py-2 mt-2 bg-white placeholder-black-400 outline outline-slate-300 active:outline-green-300 focus:outline-none focus:ring focus:ring-green-300 block rounded-md sm:text-sm w-full"
-                        tabindex="1"
-                    /></label>
-                    <label class="relative block text-slate-500">
-                      <span>Nom *</span>
-                      <Field
-                        type="text"
-                        name="lastname"
-                        class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
-                        tabindex="1"
-                    /></label>
+                    <div><CoreCustomInput v-bind="emailComponent" /></div>
+                    <div>
+                      <pre>values: {{ values }}</pre>
+                    </div>
+                    <div>
+                      <label class="relative block text-slate-500">
+                        <span>Prénom *</span>
+                        <Field
+                          type="text"
+                          name="firstname"
+                          class="pr-9 px-3 py-2 mt-2 bg-white placeholder-black-400 outline outline-slate-300 active:outline-green-300 focus:outline-none focus:ring focus:ring-green-300 block rounded-md sm:text-sm w-full"
+                          tabindex="1"
+                      /></label>
+                      <div class="pt-2 text-xs text-red-400">
+                        <ErrorMessage name="firstname" />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="relative block text-slate-500">
+                        <span>Nom *</span>
+                        <Field
+                          type="text"
+                          name="lastname"
+                          class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
+                          tabindex="1"
+                      /></label>
+                      <div class="pt-2 text-xs text-red-400">
+                        <ErrorMessage name="lastname" />
+                      </div>
+                    </div>
+
                     <div>
                       <label class="relative block text-slate-500">
                         <span>Email *</span>
@@ -68,20 +84,24 @@
                           name="email"
                           class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
                           tabindex="1"
-                          :rules="validateEmail"
                       /></label>
-                      <div class="pt-2 text-xs">
+                      <div class="pt-2 text-xs text-red-400">
                         <ErrorMessage name="email" />
                       </div>
                     </div>
-                    <label class="relative block text-slate-500">
-                      <span>Password *</span>
-                      <Field
-                        type="text"
-                        name="password"
-                        class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
-                        tabindex="1"
-                    /></label>
+                    <div>
+                      <label class="relative block text-slate-500">
+                        <span>Password *</span>
+                        <Field
+                          type="password"
+                          name="password"
+                          class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
+                          tabindex="1"
+                      /></label>
+                      <div class="pt-2 text-xs text-red-400">
+                        <ErrorMessage name="password" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -111,9 +131,10 @@
 
 <script lang="ts">
   import { defineComponent } from "vue";
-  import { Form, Field, ErrorMessage } from "vee-validate";
+  import { Form, Field, ErrorMessage, useForm } from "vee-validate";
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
   import * as yup from "yup";
+
   export default defineComponent({
     components: {
       UserCircleIcon,
@@ -125,24 +146,73 @@
       show: Boolean,
     },
     setup(props: any) {
+      const { values, errors, defineInputBinds, defineComponentBinds } = useForm({
+        validationSchema: yup.object({
+          email: yup.string().email().required(),
+          emailComponent: yup.string().email().required(),
+        }),
+      });
+      const emailComponent = defineComponentBinds("emailComponent", (state) => {
+        return {
+          // validate aggressively as long as there are errors on the input
+          validateOnModelUpdate: state.errors.length > 0,
+          validateOnBlur: true,
+          props: {
+            error: state.errors[0],
+          },
+        };
+      });
+
+      // const inscriptionSchema = yup.object({
+      //   email: yup.string().required("Champ requis").email("Email invalide"),
+      //   firstname: yup.string().required("Champ requis"),
+      //   lastname: yup.string().required("Champ requis"),
+      //   password: yup
+      //     .string()
+      //     .required("Champ requis")
+      //     .test({
+      //       name: "is-psw",
+      //       skipAbsent: true,
+      //       test(value, ctx) {
+      //         const format = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+      //         const specialCaractFormat =
+      //           /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+      //         const capitalLetterFormat = /[A-Z]/;
+      //         if (value.length < 8) {
+      //           return ctx.createError({
+      //             message: "Doit contenir au minimum 8 caractères",
+      //           });
+      //         }
+      //         if (!value.match(format)) {
+      //           return ctx.createError({
+      //             message:
+      //               "Merci d'utiliser au minimum un caractère spécial et une majuscule.",
+      //           });
+      //         }
+      //         if (!value.match(specialCaractFormat)) {
+      //           return ctx.createError({
+      //             message: "Merci d'utiliser au minimum un caractère spécial.",
+      //           });
+      //         }
+      //         if (!value.match(capitalLetterFormat)) {
+      //           return ctx.createError({
+      //             message: "Merci d'utiliser au minimum une majuscule.",
+      //           });
+      //         }
+
+      //         return true;
+      //       },
+      //     }),
+      // });
       const onSubmit = () => {
         console.log("ok");
       };
-      const validateEmail = (value) => {
-        console.log("log", value);
-        // if the field is empty
-        if (!value) {
-          return "Ce champ est requis";
-        }
-        // if the field is not a valid email
-        const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-        if (!regex.test(value)) {
-          return "Email invalid";
-        }
-        // All is good
-        return true;
+      return {
+        props,
+        onSubmit /*inscriptionSchema, email */,
+        emailComponent,
+        values,
       };
-      return { props, onSubmit, validateEmail };
     },
   });
 </script>
