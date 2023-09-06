@@ -19,6 +19,8 @@
           class="block lg:flex w-full lg:mt-[100px] sm:mt-[40px] lg:justify-around text-center px-[5%] lg:px-[25%]"
         >
           <button
+            id="show-modal"
+            @click="toggleModal(true)"
             class="rounded-full bg-white min-w-[250px] my-2 mx-2 lg:my-0 lg:mx-0 py-2 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
           >
             Inscription</button
@@ -28,17 +30,23 @@
             Connexion
           </button>
         </div>
+        <HomeModalAuthentification :show="showModal" />
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, ref, watch } from "vue";
 
   export default defineComponent({
     setup() {
-      return {};
+      const showModal = ref(false);
+      const toggleModal = (action: boolean) => {
+        showModal.value = action;
+        console.log(showModal.value, action);
+      };
+      return { showModal, toggleModal };
     },
   });
 </script>
