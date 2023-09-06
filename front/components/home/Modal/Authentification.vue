@@ -23,7 +23,8 @@
         <div
           class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
         >
-          <div
+          <Form
+            @submit="onSubmit"
             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
           >
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -42,42 +43,44 @@
                   >
                     <b>Bienvenue !</b>
                   </h2>
-                  <div class="mt-5 grid grid-cols-1 gap-4">
-                    <label class="relative block text-sm text-slate-500">
+                  <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
+                    <label class="relative block text-slate-500">
                       <span>Prénom *</span>
-                      <input
+                      <Field
                         type="text"
                         name="first"
                         class="pr-9 px-3 py-2 mt-2 bg-white placeholder-black-400 outline outline-slate-300 active:outline-green-300 focus:outline-none focus:ring focus:ring-green-300 block rounded-md sm:text-sm w-full"
                         tabindex="1"
-                        required
                     /></label>
-                    <label class="relative block text-sm text-slate-500">
+                    <label class="relative block text-slate-500">
                       <span>Nom *</span>
-                      <input
+                      <Field
                         type="text"
                         name="lastname"
                         class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
                         tabindex="1"
-                        required
                     /></label>
-                    <label class="relative block text-sm text-slate-500">
-                      <span>Email *</span>
-                      <input
-                        type="email"
-                        name="nom"
-                        class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
-                        tabindex="1"
-                        required
-                    /></label>
-                    <label class="relative block text-sm text-slate-500">
+                    <div>
+                      <label class="relative block text-slate-500">
+                        <span>Email *</span>
+                        <Field
+                          type="email"
+                          name="email"
+                          class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
+                          tabindex="1"
+                          :rules="validateEmail"
+                      /></label>
+                      <div class="pt-2 text-xs">
+                        <ErrorMessage name="email" />
+                      </div>
+                    </div>
+                    <label class="relative block text-slate-500">
                       <span>Password *</span>
-                      <input
+                      <Field
                         type="text"
-                        name="nom"
+                        name="password"
                         class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
                         tabindex="1"
-                        required
                     /></label>
                   </div>
                 </div>
@@ -87,7 +90,6 @@
               class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
             >
               <button
-                type="submit"
                 class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
               >
                 S'inscrire
@@ -100,7 +102,7 @@
                 Cancel
               </button>
             </div>
-          </div>
+          </Form>
         </div>
       </div>
     </div>
@@ -109,16 +111,38 @@
 
 <script lang="ts">
   import { defineComponent } from "vue";
+  import { Form, Field, ErrorMessage } from "vee-validate";
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
+  import * as yup from "yup";
   export default defineComponent({
     components: {
       UserCircleIcon,
+      Form,
+      Field,
+      ErrorMessage,
     },
     props: {
       show: Boolean,
     },
     setup(props: any) {
-      return { props };
+      const onSubmit = () => {
+        console.log("ok");
+      };
+      const validateEmail = (value) => {
+        console.log("log", value);
+        // if the field is empty
+        if (!value) {
+          return "Ce champ est requis";
+        }
+        // if the field is not a valid email
+        const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+        if (!regex.test(value)) {
+          return "Email invalid";
+        }
+        // All is good
+        return true;
+      };
+      return { props, onSubmit, validateEmail };
     },
   });
 </script>
