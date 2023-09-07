@@ -20,7 +20,7 @@
         >
           <button
             id="show-modal"
-            @click="toggleModal(true)"
+            @click="showModal = true"
             class="rounded-full bg-white min-w-[250px] my-2 mx-2 lg:my-0 lg:mx-0 py-2 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
           >
             Inscription</button
@@ -30,7 +30,18 @@
             Connexion
           </button>
         </div>
-        <HomeModalAuthentification :show="showModal" />
+        <!-- <HomeModalAuthentification :show="showModal" /> -->
+        <Teleport to="body">
+          <!-- use the modal component, pass in the prop -->
+          <HomeModalAuthentification
+            :show="showModal"
+            @close="showModal = false"
+          >
+            <template #header>
+              <h3>custom header</h3>
+            </template>
+          </HomeModalAuthentification>
+        </Teleport>
       </div>
     </div>
   </section>
@@ -42,11 +53,7 @@
   export default defineComponent({
     setup() {
       const showModal = ref(false);
-      const toggleModal = (action: boolean) => {
-        showModal.value = action;
-        console.log(showModal.value, action);
-      };
-      return { showModal, toggleModal };
+      return { showModal };
     },
   });
 </script>
