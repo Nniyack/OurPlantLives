@@ -25,7 +25,6 @@
         >
           <Form
             @submit="onSubmit"
-            :validation-schema="inscriptionSchema"
             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
           >
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -45,7 +44,28 @@
                     <b>Bienvenue !</b>
                   </h2>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
-                    <div><CoreCustomInput v-bind="emailComponent" /></div>
+                    <div>
+                      <CoreCustomInput
+                        v-bind="firstname"
+                        type="text"
+                        label="Prénom *"
+                      />
+                      <CoreCustomInput
+                        v-bind="lastname"
+                        type="text"
+                        label="Nom *"
+                      />
+                      <CoreCustomInput
+                        v-bind="email"
+                        type="text"
+                        label="Email *"
+                      />
+                      <CoreCustomInput
+                        v-bind="password"
+                        type="password"
+                        label="password *"
+                      />
+                    </div>
                     <div>
                       <pre>values: {{ values }}</pre>
                     </div>
@@ -110,7 +130,8 @@
               class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
             >
               <button
-                class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
+                :disabled="!meta.valid"
+                class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto disabled:bg-grey-500"
               >
                 S'inscrire
               </button>
@@ -135,6 +156,13 @@
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
   import * as yup from "yup";
 
+  interface subscribeForm {
+    email?: string | null;
+    password?: string | null;
+    firstname?: string | null;
+    lastname?: string | null;
+  }
+
   export default defineComponent({
     components: {
       UserCircleIcon,
@@ -146,13 +174,53 @@
       show: Boolean,
     },
     setup(props: any) {
-      const { values, errors, defineInputBinds, defineComponentBinds } = useForm({
-        validationSchema: yup.object({
-          email: yup.string().email().required(),
-          emailComponent: yup.string().email().required(),
-        }),
-      });
-      const emailComponent = defineComponentBinds("emailComponent", (state) => {
+      const { values, errors, meta, defineComponentBinds } =
+        useForm<subscribeForm>({
+          validationSchema: yup.object({
+            firstname: yup.string().required("Champ requis"),
+            lastname: yup.string().required("Champ requis"),
+            email: yup.string().email().required("Email invalide"),
+            password: yup
+              .string()
+              .required("Champ requis")
+              .test({
+                name: "is-psw",
+                skipAbsent: true,
+                test(value, ctx) {
+                  const format = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+                  const specialCaractFormat =
+                    /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+                  const capitalLetterFormat = /[A-Z]/;
+                  if (value.length < 8) {
+                    return ctx.createError({
+                      message: "Doit contenir au minimum 8 caractères",
+                    });
+                  }
+                  if (!value.match(format)) {
+                    return ctx.createError({
+                      message:
+                        "Merci d'utiliser au minimum un caractère spécial et une majuscule.",
+                    });
+                  }
+                  if (!value.match(specialCaractFormat)) {
+                    return ctx.createError({
+                      message:
+                        "Merci d'utiliser au minimum un caractère spécial.",
+                    });
+                  }
+                  if (!value.match(capitalLetterFormat)) {
+                    return ctx.createError({
+                      message: "Merci d'utiliser au minimum une majuscule.",
+                    });
+                  }
+
+                  return true;
+                },
+              }),
+          }),
+        });
+
+      const firstname = defineComponentBinds("firstname", (state) => {
         return {
           // validate aggressively as long as there are errors on the input
           validateOnModelUpdate: state.errors.length > 0,
@@ -160,6 +228,40 @@
           props: {
             error: state.errors[0],
           },
+          type: "text",
+        };
+      });
+      const lastname = defineComponentBinds("lastname", (state) => {
+        return {
+          // validate aggressively as long as there are errors on the input
+          validateOnModelUpdate: state.errors.length > 0,
+          validateOnBlur: true,
+          props: {
+            error: state.errors[0],
+          },
+          type: "text",
+        };
+      });
+      const email = defineComponentBinds("email", (state) => {
+        return {
+          // validate aggressively as long as there are errors on the input
+          validateOnModelUpdate: state.errors.length > 0,
+          validateOnBlur: true,
+          props: {
+            error: state.errors[0],
+          },
+          type: "email",
+        };
+      });
+      const password = defineComponentBinds("password", (state) => {
+        return {
+          // validate aggressively as long as there are errors on the input
+          validateOnModelUpdate: state.errors.length > 0,
+          validateOnBlur: true,
+          props: {
+            error: state.errors[0],
+          },
+          type: "password",
         };
       });
 
@@ -205,13 +307,18 @@
       //     }),
       // });
       const onSubmit = () => {
-        console.log("ok");
+        console.log(values, meta, meta.value.touched);
       };
       return {
         props,
         onSubmit /*inscriptionSchema, email */,
-        emailComponent,
+        email,
         values,
+        meta,
+        errors,
+        firstname,
+        lastname,
+        password,
       };
     },
   });
