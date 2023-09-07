@@ -23,8 +23,7 @@
         <div
           class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
         >
-          <Form
-            @submit="onSubmit"
+          <div
             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
           >
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -45,105 +44,41 @@
                   </h2>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
-                      <CoreCustomInput
-                        v-bind="firstname"
-                        type="text"
-                        label="Prénom *"
-                      />
-                      <CoreCustomInput
-                        v-bind="lastname"
-                        type="text"
-                        label="Nom *"
-                      />
-                      <CoreCustomInput
-                        v-bind="email"
-                        type="text"
-                        label="Email *"
-                      />
-                      <CoreCustomInput
-                        v-bind="password"
-                        type="password"
-                        label="password *"
-                      />
-                    </div>
-                    <div>
-                      <pre>values: {{ values }}</pre>
-                    </div>
-                    <div>
-                      <label class="relative block text-slate-500">
-                        <span>Prénom *</span>
-                        <Field
-                          type="text"
-                          name="firstname"
-                          class="pr-9 px-3 py-2 mt-2 bg-white placeholder-black-400 outline outline-slate-300 active:outline-green-300 focus:outline-none focus:ring focus:ring-green-300 block rounded-md sm:text-sm w-full"
-                          tabindex="1"
-                      /></label>
-                      <div class="pt-2 text-xs text-red-400">
-                        <ErrorMessage name="firstname" />
-                      </div>
-                    </div>
-                    <div>
-                      <label class="relative block text-slate-500">
-                        <span>Nom *</span>
-                        <Field
-                          type="text"
-                          name="lastname"
-                          class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
-                          tabindex="1"
-                      /></label>
-                      <div class="pt-2 text-xs text-red-400">
-                        <ErrorMessage name="lastname" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label class="relative block text-slate-500">
-                        <span>Email *</span>
-                        <Field
-                          type="email"
-                          name="email"
-                          class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
-                          tabindex="1"
-                      /></label>
-                      <div class="pt-2 text-xs text-red-400">
-                        <ErrorMessage name="email" />
-                      </div>
-                    </div>
-                    <div>
-                      <label class="relative block text-slate-500">
-                        <span>Password *</span>
-                        <Field
-                          type="password"
-                          name="password"
-                          class="pr-9 px-3 py-2 mt-1 bg-white placeholder-black-400 outline outline-slate-300 block rounded-md sm:text-sm w-full"
-                          tabindex="1"
-                      /></label>
-                      <div class="pt-2 text-xs text-red-400">
-                        <ErrorMessage name="password" />
-                      </div>
+                      <CoreDynamicForm :schema="formSchema">
+                        <template v-slot:buttons="errors">
+                          <div
+                            class="text-right text-xs text-red-400 py-2 pr-6"
+                            v-if="
+                              Object.keys(errors.buttons).length > 0 && isSubmit
+                            "
+                          >
+                            Champs requis
+                          </div>
+                          <div
+                            class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
+                          >
+                            <button
+                              @click="handleSubmit"
+                              class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto disabled:bg-grey-500"
+                            >
+                              S'inscrire
+                            </button>
+                            <button
+                              @click="$emit('close')"
+                              type="button"
+                              class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </template>
+                      </CoreDynamicForm>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div
-              class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
-            >
-              <button
-                :disabled="!meta.valid"
-                class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto disabled:bg-grey-500"
-              >
-                S'inscrire
-              </button>
-              <button
-                @click="$emit('close')"
-                type="button"
-                class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-              >
-                Cancel
-              </button>
-            </div>
-          </Form>
+          </div>
         </div>
       </div>
     </div>
@@ -151,7 +86,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, ref } from "vue";
   import { Form, Field, ErrorMessage, useForm } from "vee-validate";
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
   import * as yup from "yup";
@@ -174,13 +109,33 @@
       show: Boolean,
     },
     setup(props: any) {
-      const { values, errors, meta, defineComponentBinds } =
-        useForm<subscribeForm>({
-          validationSchema: yup.object({
-            firstname: yup.string().required("Champ requis"),
-            lastname: yup.string().required("Champ requis"),
-            email: yup.string().email().required("Email invalide"),
-            password: yup
+      const isSubmit = ref(false);
+      const formSchema = {
+        fields: [
+          {
+            label: "Prénom *",
+            name: "firstname",
+            as: "input",
+            rules: yup.string().required("Champ requis"),
+          },
+          {
+            label: "Nom *",
+            name: "lastname",
+            as: "input",
+            rules: yup.string().required("Champ requis"),
+          },
+          {
+            label: "Email *",
+            name: "email",
+            as: "input",
+            rules: yup.string().email().required("Email invalide"),
+          },
+          {
+            label: "Mot de passe *",
+            name: "password",
+            as: "input",
+            type: "password",
+            rules: yup
               .string()
               .required("Champ requis")
               .test({
@@ -217,108 +172,19 @@
                   return true;
                 },
               }),
-          }),
-        });
-
-      const firstname = defineComponentBinds("firstname", (state) => {
-        return {
-          // validate aggressively as long as there are errors on the input
-          validateOnModelUpdate: state.errors.length > 0,
-          validateOnBlur: true,
-          props: {
-            error: state.errors[0],
           },
-          type: "text",
-        };
-      });
-      const lastname = defineComponentBinds("lastname", (state) => {
-        return {
-          // validate aggressively as long as there are errors on the input
-          validateOnModelUpdate: state.errors.length > 0,
-          validateOnBlur: true,
-          props: {
-            error: state.errors[0],
-          },
-          type: "text",
-        };
-      });
-      const email = defineComponentBinds("email", (state) => {
-        return {
-          // validate aggressively as long as there are errors on the input
-          validateOnModelUpdate: state.errors.length > 0,
-          validateOnBlur: true,
-          props: {
-            error: state.errors[0],
-          },
-          type: "email",
-        };
-      });
-      const password = defineComponentBinds("password", (state) => {
-        return {
-          // validate aggressively as long as there are errors on the input
-          validateOnModelUpdate: state.errors.length > 0,
-          validateOnBlur: true,
-          props: {
-            error: state.errors[0],
-          },
-          type: "password",
-        };
-      });
-
-      // const inscriptionSchema = yup.object({
-      //   email: yup.string().required("Champ requis").email("Email invalide"),
-      //   firstname: yup.string().required("Champ requis"),
-      //   lastname: yup.string().required("Champ requis"),
-      //   password: yup
-      //     .string()
-      //     .required("Champ requis")
-      //     .test({
-      //       name: "is-psw",
-      //       skipAbsent: true,
-      //       test(value, ctx) {
-      //         const format = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-      //         const specialCaractFormat =
-      //           /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-      //         const capitalLetterFormat = /[A-Z]/;
-      //         if (value.length < 8) {
-      //           return ctx.createError({
-      //             message: "Doit contenir au minimum 8 caractères",
-      //           });
-      //         }
-      //         if (!value.match(format)) {
-      //           return ctx.createError({
-      //             message:
-      //               "Merci d'utiliser au minimum un caractère spécial et une majuscule.",
-      //           });
-      //         }
-      //         if (!value.match(specialCaractFormat)) {
-      //           return ctx.createError({
-      //             message: "Merci d'utiliser au minimum un caractère spécial.",
-      //           });
-      //         }
-      //         if (!value.match(capitalLetterFormat)) {
-      //           return ctx.createError({
-      //             message: "Merci d'utiliser au minimum une majuscule.",
-      //           });
-      //         }
-
-      //         return true;
-      //       },
-      //     }),
-      // });
-      const onSubmit = () => {
-        console.log(values, meta, meta.value.touched);
+        ],
       };
+
+      const handleSubmit = () => {
+        isSubmit.value = true;
+      };
+
       return {
         props,
-        onSubmit /*inscriptionSchema, email */,
-        email,
-        values,
-        meta,
-        errors,
-        firstname,
-        lastname,
-        password,
+        handleSubmit,
+        isSubmit,
+        formSchema,
       };
     },
   });
