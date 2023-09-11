@@ -52,7 +52,7 @@
                               Object.keys(errors.buttons).length > 0 && isSubmit
                             "
                           >
-                            Champs requis
+                            Champs requis *
                           </div>
                           <div
                             class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
@@ -128,7 +128,7 @@
             label: "Email *",
             name: "email",
             as: "input",
-            rules: yup.string().email().required("Email invalide"),
+            rules: yup.string().email("Email invalide").required("Champ requis"),
           },
           {
             label: "Mot de passe *",
