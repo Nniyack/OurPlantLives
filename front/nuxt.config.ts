@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     'nuxt-icon',
     '@vueuse/nuxt',
+    '@pinia/nuxt',
   ],
   plugins: [
     { src: '~/plugins/scroll-behavior.client.ts', mode: 'client' }

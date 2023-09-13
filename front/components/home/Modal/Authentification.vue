@@ -44,7 +44,10 @@
                   </h2>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
-                      <CoreDynamicForm :schema="formSchema">
+                      <CoreDynamicForm
+                        :schema="authFormSchema"
+                        @validate="formValidate"
+                      >
                         <template v-slot:buttons="errors">
                           <div
                             class="text-right text-xs text-red-400 py-2 pr-6"
@@ -86,17 +89,11 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from "vue";
-  import { Form, Field, ErrorMessage, useForm } from "vee-validate";
+  import { defineComponent, ref, PropType } from "vue";
+  import { Form, Field, ErrorMessage } from "vee-validate";
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
-  import * as yup from "yup";
-
-  interface subscribeForm {
-    email?: string | null;
-    password?: string | null;
-    firstname?: string | null;
-    lastname?: string | null;
-  }
+  import { authFormSchema } from "../../schema/form/authentification";
+  import type { Ref } from "vue";
 
   export default defineComponent({
     components: {
@@ -106,85 +103,27 @@
       ErrorMessage,
     },
     props: {
-      show: Boolean,
+      show: Boolean as PropType<Boolean>,
+      typeAuth: String as PropType<TypeAuth>,
     },
     setup(props: any) {
-      const isSubmit = ref(false);
-      const formSchema = {
-        fields: [
-          {
-            label: "Prénom *",
-            name: "firstname",
-            as: "input",
-            rules: yup.string().required("Champ requis"),
-          },
-          {
-            label: "Nom *",
-            name: "lastname",
-            as: "input",
-            rules: yup.string().required("Champ requis"),
-          },
-          {
-            label: "Email *",
-            name: "email",
-            as: "input",
-            rules: yup.string().email("Email invalide").required("Champ requis"),
-          },
-          {
-            label: "Mot de passe *",
-            name: "password",
-            as: "input",
-            type: "password",
-            rules: yup
-              .string()
-              .required("Champ requis")
-              .test({
-                name: "is-psw",
-                skipAbsent: true,
-                test(value, ctx) {
-                  const format = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                  const specialCaractFormat =
-                    /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                  const capitalLetterFormat = /[A-Z]/;
-                  if (value.length < 8) {
-                    return ctx.createError({
-                      message: "Doit contenir au minimum 8 caractères",
-                    });
-                  }
-                  if (!value.match(format)) {
-                    return ctx.createError({
-                      message:
-                        "Merci d'utiliser au minimum un caractère spécial et une majuscule.",
-                    });
-                  }
-                  if (!value.match(specialCaractFormat)) {
-                    return ctx.createError({
-                      message:
-                        "Merci d'utiliser au minimum un caractère spécial.",
-                    });
-                  }
-                  if (!value.match(capitalLetterFormat)) {
-                    return ctx.createError({
-                      message: "Merci d'utiliser au minimum une majuscule.",
-                    });
-                  }
-
-                  return true;
-                },
-              }),
-          },
-        ],
-      };
+      const isSubmit: Ref<Boolean> = ref(false);
+      const { registerUser }: any = useFirebaseAuth();
 
       const handleSubmit = () => {
         isSubmit.value = true;
+      };
+      const formValidate = async (values: any) => {
+        console.log(values);
+        await registerUser(values.email, values.password);
       };
 
       return {
         props,
         handleSubmit,
         isSubmit,
-        formSchema,
+        authFormSchema,
+        formValidate,
       };
     },
   });

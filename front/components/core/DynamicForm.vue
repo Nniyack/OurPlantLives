@@ -51,9 +51,9 @@
         required: true,
       },
     },
-    setup() {
+    setup(props: any, context: any) {
       const onSubmit = (values: any) => {
-        console.log(values);
+        context.emit("validate", values);
       };
       return { onSubmit };
     },

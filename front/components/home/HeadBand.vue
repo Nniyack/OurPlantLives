@@ -25,6 +25,7 @@
           >
             Inscription</button
           ><button
+            @click="showModal = true"
             class="rounded-full bg-white min-w-[250px] py-2 mx-2 lg:my-0 lg:mx-0 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
           >
             Connexion
@@ -35,6 +36,7 @@
           <!-- use the modal component, pass in the prop -->
           <HomeModalAuthentification
             :show="showModal"
+            :typeAuth="typeAuth"
             @close="showModal = false"
           >
             <template #header>
@@ -48,12 +50,19 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, watch } from "vue";
+  import { defineComponent, ref } from "vue";
+  import type { Ref } from "vue";
+
+  import type { TypeAuth } from "../../types/forms";
 
   export default defineComponent({
     setup() {
-      const showModal = ref(false);
-      return { showModal };
+      const showModal: Ref<Boolean> = ref(false);
+      const typeAuth: Ref<TypeAuth> = ref(null);
+      const openModal = (show: any, type: any) => {
+        showModal.value = show;
+      };
+      return { showModal, typeAuth, openModal };
     },
   });
 </script>
