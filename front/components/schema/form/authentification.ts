@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const authFormSchema: fieldsArrayForm = {
+export const authFormSchema: FieldsArrayForm = {
   fields: [
     {
       label: "Prénom *",

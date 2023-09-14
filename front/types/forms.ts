@@ -10,11 +10,11 @@ declare global {
     type?: String;
   }
 
-  interface fieldsArrayForm {
+  interface FieldsArrayForm {
     fields: Array<field>;
   }
 
-  type formAuth = {
+  type FormAuth = {
     lastname: String;
     firstname: String;
     email: String;
@@ -23,4 +23,4 @@ declare global {
 
   type TypeAuth = "connexion" | "subscribe" | null;
 }
-export { fieldsArrayForm, formAuth, TypeAuth };
+export { FieldsArrayForm, FormAuth, TypeAuth };

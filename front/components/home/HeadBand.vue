@@ -20,12 +20,12 @@
         >
           <button
             id="show-modal"
-            @click="showModal = true"
+            @click="openModal(true, 'subscribe')"
             class="rounded-full bg-white min-w-[250px] my-2 mx-2 lg:my-0 lg:mx-0 py-2 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
           >
             Inscription</button
           ><button
-            @click="showModal = true"
+            @click="openModal(true, 'connexion')"
             class="rounded-full bg-white min-w-[250px] py-2 mx-2 lg:my-0 lg:mx-0 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
           >
             Connexion
@@ -61,6 +61,7 @@
       const typeAuth: Ref<TypeAuth> = ref(null);
       const openModal = (show: any, type: any) => {
         showModal.value = show;
+        typeAuth.value = type;
       };
       return { showModal, typeAuth, openModal };
     },

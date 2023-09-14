@@ -42,6 +42,30 @@
                   >
                     <b>Bienvenue !</b>
                   </h2>
+                  <div class="flex justify-items-center justify-around my-10">
+                    <div
+                      @click="handleCLick('connexion')"
+                      :class="`${
+                        typeAuthChanged === 'connexion'
+                          ? 'border-b-2 border-green-300'
+                          : 'text-slate-700 hover:text-black'
+                      } cursor-pointer m-4 select-none`"
+                    >
+                      {{ typeAuthChanged }}
+                      Se connecter
+                    </div>
+                    <div
+                      @click="handleCLick('subscribe')"
+                      :class="`${
+                        typeAuthChanged === 'subscribe'
+                          ? 'border-b-2 border-green-300'
+                          : 'text-slate-700 hover:text-black'
+                      } cursor-pointer m-4 select-none`"
+                    >
+                      {{ typeAuthChanged }}
+                      Créer un compte
+                    </div>
+                  </div>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
                       <CoreDynamicForm
@@ -64,7 +88,7 @@
                               @click="handleSubmit"
                               class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto disabled:bg-grey-500"
                             >
-                              S'inscrire
+                              {{ labelBtnTypeAuth }}
                             </button>
                             <button
                               @click="$emit('close')"
@@ -89,7 +113,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, PropType } from "vue";
+  import { defineComponent, ref, PropType, watch, computed, reactive } from "vue";
   import { Form, Field, ErrorMessage } from "vee-validate";
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
   import { authFormSchema } from "../../schema/form/authentification";
@@ -106,13 +130,39 @@
       show: Boolean as PropType<Boolean>,
       typeAuth: String as PropType<TypeAuth>,
     },
-    setup(props: any) {
+    setup(props: any, context: any) {
       const isSubmit: Ref<Boolean> = ref(false);
+      const labelBtnTypeAuth: Ref<String | null> = ref(null);
+      let typeAuthChanged = reactive(props.typeAuth || {});
+      let classBtnSelectType = reactive({});
       const { registerUser }: any = useFirebaseAuth();
+
+      const labelBtn = (name: string) => {
+        if (name === "connexion") labelBtnTypeAuth.value = "Connexion";
+        if (name === "subscribe") labelBtnTypeAuth.value = "S'inscrire";
+      };
+      const test = {
+        type(name: string): any {
+          return ["subscribe", "connexion"].includes(name)
+            ? "border-b-2 border-green-300"
+            : "text-slate-700 hover:text-black";
+        },
+      };
+      watch(props, () => {
+        console.log(typeAuthChanged);
+        labelBtn(props.typeAuth);
+      });
+
+      const handleCLick = (name: string) => {
+        typeAuthChanged = name;
+        labelBtn(name);
+        console.log(typeAuthChanged);
+      };
 
       const handleSubmit = () => {
         isSubmit.value = true;
       };
+
       const formValidate = async (values: any) => {
         console.log(values);
         await registerUser(values.email, values.password);
@@ -124,6 +174,10 @@
         isSubmit,
         authFormSchema,
         formValidate,
+        labelBtnTypeAuth,
+        handleCLick,
+        typeAuthChanged,
+        classBtnSelectType,
       };
     },
   });
