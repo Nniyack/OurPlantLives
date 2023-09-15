@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const authFormSchema: FieldsArrayForm = {
+const subscribeFormSchema: FieldsArrayForm = {
   fields: [
     {
       label: "Prénom *",
@@ -65,3 +65,22 @@ export const authFormSchema: FieldsArrayForm = {
     },
   ],
 };
+
+const connexionFormSchema: FieldsArrayForm = {
+  fields: [
+    {
+      label: "Email *",
+      name: "email",
+      as: "input",
+      rules: yup.string().email("Email invalide").required("Champ requis"),
+    },
+    {
+      label: "Mot de passe *",
+      name: "password",
+      as: "input",
+      type: "password",
+      rules: yup.string().required("Champ requis"),
+    },
+  ]
+}
+export { connexionFormSchema, subscribeFormSchema }
