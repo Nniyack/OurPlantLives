@@ -50,10 +50,12 @@
         type: Object,
         required: true,
       },
+      resetForm: Boolean,
     },
-    setup() {
-      const onSubmit = (values: any) => {
-        console.log(values);
+    setup(props: any, context: any) {
+      const onSubmit = (values: any, { resetForm }: any) => {
+        context.emit("validate", values);
+        resetForm();
       };
       return { onSubmit };
     },

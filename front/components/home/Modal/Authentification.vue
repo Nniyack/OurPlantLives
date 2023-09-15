@@ -42,9 +42,39 @@
                   >
                     <b>Bienvenue !</b>
                   </h2>
+                  <div class="flex justify-items-center justify-around my-5">
+                    <div
+                      @click="handleCLick('connexion')"
+                      :class="`${
+                        selectType.connexion
+                          ? 'border-b-2 border-green-300'
+                          : 'text-slate-700 hover:text-black'
+                      } cursor-pointer m-4 select-none`"
+                    >
+                      Se connecter
+                    </div>
+                    <div
+                      @click="handleCLick('subscribe')"
+                      :class="`${
+                        selectType.subscribe
+                          ? 'border-b-2 border-green-300'
+                          : 'text-slate-700 hover:text-black'
+                      } cursor-pointer m-4 select-none`"
+                    >
+                      Créer un compte
+                    </div>
+                  </div>
+                  <hr />
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
-                      <CoreDynamicForm :schema="formSchema">
+                      <CoreDynamicForm
+                        ref="formAuth"
+                        :schema="
+                          (selectType.connexion && connexionFormSchema) ||
+                          (selectType.subscribe && subscribeFormSchema)
+                        "
+                        @validate="formValidate"
+                      >
                         <template v-slot:buttons="errors">
                           <div
                             class="text-right text-xs text-red-400 py-2 pr-6"
@@ -52,7 +82,7 @@
                               Object.keys(errors.buttons).length > 0 && isSubmit
                             "
                           >
-                            Champs requis
+                            Champs requis *
                           </div>
                           <div
                             class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
@@ -61,7 +91,7 @@
                               @click="handleSubmit"
                               class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto disabled:bg-grey-500"
                             >
-                              S'inscrire
+                              {{ selectType.validBtnLabel }}
                             </button>
                             <button
                               @click="$emit('close')"
@@ -86,16 +116,20 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from "vue";
-  import { Form, Field, ErrorMessage, useForm } from "vee-validate";
+  import { defineComponent, ref, PropType, watch, computed, reactive } from "vue";
+  import { Form, Field, ErrorMessage } from "vee-validate";
   import { UserCircleIcon } from "@heroicons/vue/24/outline";
-  import * as yup from "yup";
+  import {
+    subscribeFormSchema,
+    connexionFormSchema,
+  } from "../../schema/form/authentification";
+  import type { Ref } from "vue";
 
-  interface subscribeForm {
-    email?: string | null;
-    password?: string | null;
-    firstname?: string | null;
-    lastname?: string | null;
+  interface TypeAuthFct {
+    connexion: Boolean;
+    subscribe: Boolean;
+    validBtnLabel: String;
+    type(name: String): void;
   }
 
   export default defineComponent({
@@ -106,85 +140,58 @@
       ErrorMessage,
     },
     props: {
-      show: Boolean,
+      show: Boolean as PropType<Boolean>,
+      typeAuth: String as PropType<TypeAuth>,
     },
-    setup(props: any) {
-      const isSubmit = ref(false);
-      const formSchema = {
-        fields: [
-          {
-            label: "Prénom *",
-            name: "firstname",
-            as: "input",
-            rules: yup.string().required("Champ requis"),
-          },
-          {
-            label: "Nom *",
-            name: "lastname",
-            as: "input",
-            rules: yup.string().required("Champ requis"),
-          },
-          {
-            label: "Email *",
-            name: "email",
-            as: "input",
-            rules: yup.string().email().required("Email invalide"),
-          },
-          {
-            label: "Mot de passe *",
-            name: "password",
-            as: "input",
-            type: "password",
-            rules: yup
-              .string()
-              .required("Champ requis")
-              .test({
-                name: "is-psw",
-                skipAbsent: true,
-                test(value, ctx) {
-                  const format = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                  const specialCaractFormat =
-                    /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                  const capitalLetterFormat = /[A-Z]/;
-                  if (value.length < 8) {
-                    return ctx.createError({
-                      message: "Doit contenir au minimum 8 caractères",
-                    });
-                  }
-                  if (!value.match(format)) {
-                    return ctx.createError({
-                      message:
-                        "Merci d'utiliser au minimum un caractère spécial et une majuscule.",
-                    });
-                  }
-                  if (!value.match(specialCaractFormat)) {
-                    return ctx.createError({
-                      message:
-                        "Merci d'utiliser au minimum un caractère spécial.",
-                    });
-                  }
-                  if (!value.match(capitalLetterFormat)) {
-                    return ctx.createError({
-                      message: "Merci d'utiliser au minimum une majuscule.",
-                    });
-                  }
+    setup(props: any, context: any) {
+      const isSubmit: Ref<Boolean> = ref(false);
+      const formAuth: Ref<any> = ref({});
+      let selectType: TypeAuthFct = reactive({
+        connexion: false,
+        subscribe: false,
+        validBtnLabel: "",
+        type: function (this: any, name: string): void {
+          const isConnexion = name === "connexion";
+          const isSubscribe = name === "subscribe";
+          this.connexion = isConnexion;
+          this.subscribe = isSubscribe;
+          this.validBtnLabel =
+            (isSubscribe && "S'inscrire") || (isConnexion && "Connexion");
+        },
+      });
 
-                  return true;
-                },
-              }),
-          },
-        ],
+      const { registerUser, signInUser }: any = useFirebaseAuth();
+
+      watch(props, () => {
+        selectType.type(props.typeAuth);
+      });
+
+      const handleCLick = (name: string) => {
+        console.log(formAuth);
+        formAuth.value.form.resetForm();
+        selectType.type(name);
       };
 
       const handleSubmit = () => {
         isSubmit.value = true;
       };
 
+      const formValidate = async (values: any) => {
+        if (selectType.subscribe)
+          await registerUser(values.email, values.password);
+        if (selectType.connexion) await signInUser(values.email, values.password);
+      };
+
       return {
         props,
         handleSubmit,
         isSubmit,
-        formSchema,
+        subscribeFormSchema,
+        connexionFormSchema,
+        formValidate,
+        handleCLick,
+        selectType,
+        formAuth,
       };
     },
   });

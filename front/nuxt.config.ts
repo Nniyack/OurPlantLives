@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     'nuxt-icon',
     '@vueuse/nuxt',
+    '@pinia/nuxt',
   ],
   plugins: [
     { src: '~/plugins/scroll-behavior.client.ts', mode: 'client' }
@@ -49,5 +50,8 @@ export default defineNuxtConfig({
   },
   typescript: {
     strict: true
-  }
+  },
+  alias: {
+    pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs"
+  },
 })

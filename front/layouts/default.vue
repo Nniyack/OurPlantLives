@@ -1,17 +1,19 @@
 <template>
   <div>
     <HeaderNavBar />
+    <Alert type="error" :text="testNode" />
     <slot />
     <Footer />
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, h } from "vue";
 
   export default defineComponent({
     setup() {
-      return {};
+      const testNode = h("div", [h("i", "hello")]);
+      return { testNode };
     },
   });
 </script>
