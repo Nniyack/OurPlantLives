@@ -30,6 +30,10 @@
           >
             Connexion
           </button>
+          <CoreCustomButton
+            @click="openModal(true, 'connexion')"
+            label="Connexion"
+          />
         </div>
         <!-- <HomeModalAuthentification :show="showModal" /> -->
         <Teleport to="body">

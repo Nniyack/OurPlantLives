@@ -162,7 +162,7 @@
 
       const { registerUser, signInUser }: any = useFirebaseAuth();
 
-      watch(props, () => {
+      watch(props.typeAuth, () => {
         selectType.type(props.typeAuth);
       });
 
