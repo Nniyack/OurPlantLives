@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`${color} border-t-4 rounded-b text-teal-900 px-4 py-3 shadow-md absolute mt-5`"
+    :class="`${color} border-t-4 rounded-b text-teal-900 px-4 py-3 shadow-md absolute mt-5 min-w-[33%]`"
     role="alert"
   >
     <div class="flex">
@@ -8,7 +8,7 @@
         <ExclamationTriangleIcon v-if="type === 'error'" class="h-6 w-6 mt-2" />
         <CheckCircleIcon v-if="type === 'validate'" class="h-6 w-6 mt-2" />
       </div>
-      <component :is="text" class="py-3" />
+      <component :is="htmlText" class="py-3" />
     </div>
   </div>
 </template>
@@ -19,6 +19,9 @@
     ExclamationTriangleIcon,
     CheckCircleIcon,
   } from "@heroicons/vue/24/outline";
+
+  type TypeAlert = "error" | "validate" | null;
+
   export default defineComponent({
     components: {
       ExclamationTriangleIcon,
@@ -26,7 +29,7 @@
     },
     props: {
       type: String as PropType<TypeAlert>,
-      text: Object,
+      htmlText: Object as PropType<VNodeRef>,
     },
     setup(props: any) {
       const color = computed(() => {
@@ -35,10 +38,8 @@
             return "bg-red-100 border-red-500";
           case "validate":
             return "bg-teal-100 border-teal-500";
-          case "message":
-            return "bg-blue-100 border-blue-500";
           default:
-            break;
+            return "bg-blue-100 border-blue-500";
         }
       });
       // const test100 = (min, max) => {

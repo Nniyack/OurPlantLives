@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderNavBar />
-    <Alert type="error" :text="testNode" />
+    <Alert type="error" :htmlText="testNode" />
     <slot />
     <Footer />
   </div>
