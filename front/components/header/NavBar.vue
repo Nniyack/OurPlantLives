@@ -1,28 +1,28 @@
 <template>
   <nav
-    class="p-5 block lg:flex items-center justify-between flex-wrap bg-gray-100"
+    class="p-5 block lg:flex items-center justify-between flex-wrap bg-transparent"
   >
     <div
-      class="min-w-[30%] basis-6 items-center lg:mt-0 mr-6 text-xl text-green-ui font-medium pl-3"
+      class="min-w-[30%] basis-6 items-center lg:mt-0 mr-6 text-2xl text-green-design-1 font-extrabold pl-3"
     >
       <NuxtLink to="/"> OurPlantLives </NuxtLink>
     </div>
     <div
-      :class="` block grow justify-evenly lg:pl-0 pl-3 lg:pt-0 pt-4 lg:flex lg:visible lg:pr-40  w-auto ${
+      :class="` block grow justify-evenly lg:pl-0 pl-3 lg:pt-0 pt-4 lg:flex lg:visible lg:pr-40 font-medium text-green-design-2 w-auto ${
         isShow ? 'visible' : 'hidden'
       }`"
     >
       <NuxtLink
-        class="lg:mx-10 lg:block text-lg lg:inline-block mt-4 lg:mt-0 text-spearmint hover:text-green-kelly-ui"
+        class="lg:mx-10 lg:block text-lg lg:inline-block mt-4 lg:mt-0 hover:text-red-salmon-design-1"
         to="/mesplantes"
       >
-        Mes plantes
+        MES PLANTES
       </NuxtLink>
       <NuxtLink
-        class="lg:mx-10 block text-lg lg:inline-block mt-4 lg:mt-0 text-spearmint hover:text-green-kelly-ui"
+        class="lg:mx-10 block text-lg lg:inline-block mt-4 lg:mt-0 hover:text-red-salmon-design-1"
         to="/astuces"
       >
-        Astuces
+        ASTUCES
       </NuxtLink>
     </div>
     <div class="w-auto lg:w-80 lg:hidden">

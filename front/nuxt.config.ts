@@ -35,10 +35,14 @@ export default defineNuxtConfig({
     'nuxt-icon',
     '@vueuse/nuxt',
     '@pinia/nuxt',
+    '@nuxt/image',
   ],
   plugins: [
     { src: '~/plugins/scroll-behavior.client.ts', mode: 'client' }
   ],
+  image: {
+    dir: 'assets/animate'
+  },
   googleFonts: {
     families: {
       Exo: true,
