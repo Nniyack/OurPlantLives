@@ -1,7 +1,7 @@
 <template>
   <div>
-    <HeaderNavBar :class="{ 'header-animation': isIndex === 'index' }" />
-    <!-- <Alert type="error" :text="testNode" /> -->
+    <HeaderNavBar />
+    <Alert type="error" :htmlText="testNode" />
     <slot />
     <Footer />
   </div>
