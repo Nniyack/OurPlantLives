@@ -1,40 +1,72 @@
 <template>
-  <section
-    class="h-[600px] lg:h-[800px] lg:bg-fixed bg-center bg-cover custom-img items-center justify-center h-screen"
-  >
+  <section class="h-screen w-screen">
     <div class="container-full">
       <div
-        class="text-green-950/[.7] font-bold left-[6%] sm:top-0 lg:top-[300px] flex flex-col w-full lg:absolute delay-200"
+        ref="headBand"
+        class="font-bold left-[6%] sm:top-0 lg:pt-[200px] flex flex-col w-full delay-200"
       >
-        <div class="mt-40 px-7 pb-4 lg:pb-0 lg:mt-0 lg:px-0 flex flex-col">
-          <span class="text-lg sm:text-2xl lg:text-6xl lg:pb-[20px]"
-            >Une gestion de chaque plante,</span
+        <div
+          class="px-7 pb-4 lg:pb-0 lg:mt-0 lg:px-0 lg:pl-[100px] flex flex-col z-10 text-green-design-1 title-text"
+        >
+          <span
+            class="text-lg sm:text-2xl lg:text-6xl lg:pb-[20px] title-text-1"
+            >Prenez SOIN de vos plantes</span
           >
-          <span class="text-lg sm:text-2xl lg:text-6xl lg:pl-20"
-            >avec un paramétrage de notifications</span
+          <span
+            class="text-lg sm:text-2xl lg:text-6xl lg:pl-20 pb-5 title-text-2"
+            >avec OurPlantsLives</span
           >
         </div>
 
         <div
-          class="block lg:flex w-full lg:mt-[100px] sm:mt-[40px] lg:justify-around text-center px-[5%] lg:px-[25%]"
+          class="w-full lg:flex lg:mt-[100px] sm:mt-[40px] lg:justify-evenly text-center px-[5%] lg:px-[25%] bloc-btn"
         >
-          <button
-            id="show-modal"
+          <CoreCustomButton
             @click="openModal(true, 'subscribe')"
-            class="rounded-full bg-white min-w-[250px] my-2 mx-2 lg:my-0 lg:mx-0 py-2 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
-          >
-            Inscription</button
-          ><button
-            @click="openModal(true, 'connexion')"
-            class="rounded-full bg-white min-w-[250px] py-2 mx-2 lg:my-0 lg:mx-0 hover:bg-green-lime-ui hover:text-white transition duration-700 ease-in-out"
-          >
-            Connexion
-          </button>
+            label="Inscription"
+          />
           <CoreCustomButton
             @click="openModal(true, 'connexion')"
             label="Connexion"
           />
         </div>
+        <div v-if="targetIsVisible">
+          <NuxtImg
+            src="../../assets/animate/plant-1-moved.png"
+            class="absolute bottom-0 right-0"
+            preload
+            format="png"
+            height="400"
+            width="400"
+          />
+          <NuxtImg
+            src="../../assets/animate/plant-2.png"
+            class="absolute top-0 left-[300px]"
+            height="60"
+            width="60"
+            preload
+            format="png"
+          />
+          <NuxtImg
+            src="../../assets/animate/plant-3.png"
+            class="absolute bottom-0 left-0"
+            height="400"
+            width="400"
+            preload
+            format="png"
+          />
+        </div>
+        <div>
+          <!-- <NuxtImg
+            src="../../assets/animate/plant-1.png"
+            class="absolute bottom-0 right-0"
+            preload
+            format="png"
+            height="400"
+            width="400"
+          /> -->
+        </div>
+
         <!-- <HomeModalAuthentification :show="showModal" /> -->
         <Teleport to="body">
           <!-- use the modal component, pass in the prop -->
@@ -54,26 +86,66 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from "vue";
+  import { defineComponent, ref, watch } from "vue";
   import type { Ref } from "vue";
+  import { useWindowSize, useWindowScroll } from "@vueuse/core";
+  import { useElementVisibility } from "@vueuse/core";
 
   import type { TypeAuth } from "../../types/forms";
 
   export default defineComponent({
     setup() {
+      const headBand = ref(null);
       const showModal: Ref<Boolean> = ref(false);
       const typeAuth: Ref<TypeAuth> = ref(null);
+      const { x, y } = useWindowScroll();
+      const { width, height } = useWindowSize();
+      const targetIsVisible = useElementVisibility(headBand);
       const openModal = (show: any, type: any) => {
         showModal.value = show;
         typeAuth.value = type;
       };
-      return { showModal, typeAuth, openModal };
+      watch(targetIsVisible, () => {
+        console.log("scroll", width, height);
+      });
+      // watch(y, () => {
+      //   console.log("scroll", x.value, y.value);
+      // });
+      // console.log(width, height);
+      watch(y, () => {
+        console.log("scroll", x.value, y.value);
+      });
+
+      return { showModal, typeAuth, openModal, headBand, targetIsVisible };
     },
   });
 </script>
 
-<style scoped>
-.custom-img {
-  background-image: url("@/assets/Images/image-header-home.jpg");
+<style lang=scss scoped>
+$animation-text: 1s ease-out 0s 1;
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(300%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.title-text-1 {
+  animation: 1s ease-out 0s 1 slideInFromLeft;
+}
+.title-text-2 {
+  animation: 1.3s ease-out 0s 1 slideInFromLeft;
+}
+.bloc-btn {
+  animation: 1.3s ease-out 0s 1 slideInFromBottom;
 }
 </style>

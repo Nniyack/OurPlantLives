@@ -1,7 +1,8 @@
 <template>
-  <HomeHeadBand />
-  <HomeDescription />
-  <Footer />
+  <div class="flex w-full">
+    <HomeHeadBand />
+    <HomeDescription />
+  </div>
 </template>
 
 <script lang="ts">

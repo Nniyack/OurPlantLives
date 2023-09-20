@@ -15,6 +15,9 @@
 
 <script lang="ts">
   import { defineComponent, PropType, computed, VNodeRef } from "vue";
+
+  type TypeAlert = "error" | "validate" | "message" | null;
+
   import {
     ExclamationTriangleIcon,
     CheckCircleIcon,
@@ -26,7 +29,7 @@
     },
     props: {
       type: String as PropType<TypeAlert>,
-      text: Object,
+      text: Object as PropType<VNodeRef>,
     },
     setup(props: any) {
       const color = computed(() => {
