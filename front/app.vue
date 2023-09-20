@@ -9,6 +9,9 @@
 
   export default defineComponent({
     setup() {
+      const route = useRoute();
+      console.log(route.name);
+
       return {};
     },
   });

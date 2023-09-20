@@ -15,6 +15,9 @@
 
 <script lang="ts">
   import { defineComponent, PropType, computed, VNodeRef } from "vue";
+
+  type TypeAlert = "error" | "validate" | "message" | null;
+
   import {
     ExclamationTriangleIcon,
     CheckCircleIcon,
