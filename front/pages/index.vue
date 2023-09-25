@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full">
+  <div class="w-full h-full">
     <HomeHeadBand />
     <HomeDescription />
   </div>
