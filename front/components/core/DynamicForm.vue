@@ -47,7 +47,7 @@
     },
     props: {
       schema: {
-        type: Object as PropType<FieldsArrayForm>,
+        type: Object as PropType<Object>,
         required: true,
       },
       resetForm: Boolean,

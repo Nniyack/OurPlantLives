@@ -65,6 +65,15 @@
                     </div>
                   </div>
                   <hr />
+                  <div
+                    v-if="errorMsg !== ''"
+                    class="flex bg-red-200 p-5 mt-4 rounded-md border-2 border border-red-400"
+                  >
+                    <ExclamationTriangleIcon
+                      class="h-6 w-6 text-red-800 mr-3"
+                    />
+                    <span class="text-slate-700 text-sm">{{ errorMsg }}</span>
+                  </div>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
                       <CoreDynamicForm
@@ -114,7 +123,10 @@
 <script lang="ts">
   import { defineComponent, ref, PropType, watch, computed, reactive } from "vue";
   import { Form, Field, ErrorMessage } from "vee-validate";
-  import { UserCircleIcon } from "@heroicons/vue/24/outline";
+  import {
+    UserCircleIcon,
+    ExclamationTriangleIcon,
+  } from "@heroicons/vue/24/outline";
   import {
     subscribeFormSchema,
     connexionFormSchema,
@@ -131,6 +143,7 @@
   export default defineComponent({
     components: {
       UserCircleIcon,
+      ExclamationTriangleIcon,
       Form,
       Field,
       ErrorMessage,
@@ -141,6 +154,7 @@
     },
     setup(props: any, context: any) {
       const isSubmit: Ref<Boolean> = ref(false);
+      const errorMsg: Ref<String> = ref("");
       let selectType: TypeAuthFct = reactive({
         connexion: false,
         subscribe: false,
@@ -161,10 +175,11 @@
         selectType.type(props.typeAuth);
       });
 
-      const schemaType = (): FieldsArrayForm | undefined => {
+      const schemaType = (): FieldsArrayForm | Object => {
         const { connexion, subscribe } = selectType;
         if (connexion) return connexionFormSchema;
         if (subscribe) return subscribeFormSchema;
+        return {};
       };
 
       const handleCLick = (name: string) => {
@@ -178,7 +193,14 @@
       const formValidate = async (values: any) => {
         if (selectType.subscribe)
           await registerUser(values.email, values.password);
-        if (selectType.connexion) await signInUser(values.email, values.password);
+        if (selectType.connexion)
+          await signInUser(values.email, values.password)
+            .then((e: any) => {
+              console.log(e);
+            })
+            .catch((error: any) => {
+              errorMsg.value = error.message;
+            });
       };
 
       return {
@@ -191,6 +213,7 @@
         handleCLick,
         selectType,
         schemaType,
+        errorMsg,
       };
     },
   });
