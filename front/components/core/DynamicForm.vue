@@ -1,5 +1,5 @@
 <template>
-  <Form @submit="onSubmit" v-slot="{ errors }">
+  <Form ref="formRef" @submit="onSubmit" v-slot="{ errors }">
     <div
       v-for="{ as, name, label, children, ...attrs } in schema.fields"
       :key="name"
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, PropType, watch, ref, Ref } from "vue";
   import { Form, Field, ErrorMessage } from "vee-validate";
   export default defineComponent({
     name: "DynamicForm",
@@ -47,17 +47,21 @@
     },
     props: {
       schema: {
-        type: Object,
+        type: Object as PropType<FieldsArrayForm>,
         required: true,
       },
       resetForm: Boolean,
     },
     setup(props: any, context: any) {
-      const onSubmit = (values: any, { resetForm }: any) => {
+      const formRef: Ref<any> = ref(null);
+      watch(props, () => {
+        formRef.value.resetForm();
+      });
+      const onSubmit = (values: any) => {
         context.emit("validate", values);
-        resetForm();
+        formRef.value.resetForm();
       };
-      return { onSubmit };
+      return { onSubmit, formRef };
     },
   });
 </script>

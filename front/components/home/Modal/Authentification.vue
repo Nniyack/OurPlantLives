@@ -10,7 +10,7 @@
   >
     <div
       v-if="show"
-      class="relative z-10"
+      class="relative z-20"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -68,11 +68,7 @@
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
                       <CoreDynamicForm
-                        ref="formAuth"
-                        :schema="
-                          (selectType.connexion && connexionFormSchema) ||
-                          (selectType.subscribe && subscribeFormSchema)
-                        "
+                        :schema="schemaType()"
                         @validate="formValidate"
                       >
                         <template v-slot:buttons="errors">
@@ -145,7 +141,6 @@
     },
     setup(props: any, context: any) {
       const isSubmit: Ref<Boolean> = ref(false);
-      const formAuth: Ref<any> = ref({});
       let selectType: TypeAuthFct = reactive({
         connexion: false,
         subscribe: false,
@@ -162,13 +157,17 @@
 
       const { registerUser, signInUser }: any = useFirebaseAuth();
 
-      watch(props.typeAuth, () => {
+      watch(props, () => {
         selectType.type(props.typeAuth);
       });
 
+      const schemaType = (): FieldsArrayForm | undefined => {
+        const { connexion, subscribe } = selectType;
+        if (connexion) return connexionFormSchema;
+        if (subscribe) return subscribeFormSchema;
+      };
+
       const handleCLick = (name: string) => {
-        console.log(formAuth);
-        formAuth.value.form.resetForm();
         selectType.type(name);
       };
 
@@ -191,7 +190,7 @@
         formValidate,
         handleCLick,
         selectType,
-        formAuth,
+        schemaType,
       };
     },
   });

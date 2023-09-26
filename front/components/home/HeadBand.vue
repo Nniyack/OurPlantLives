@@ -96,7 +96,7 @@
     setup() {
       const headBand = ref(null);
       const showModal: Ref<Boolean> = ref(false);
-      const typeAuth: Ref<TypeAuth> = ref(null);
+      const typeAuth: Ref<TypeAuth> = ref("");
       const targetIsVisible = useElementVisibility(headBand);
       // watch(targetIsVisible, () => {
       //   console.log("ok");

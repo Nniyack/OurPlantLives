@@ -21,6 +21,6 @@ declare global {
     password: String;
   }
 
-  type TypeAuth = "connexion" | "subscribe" | null;
+  type TypeAuth = "connexion" | "subscribe" | "";
 }
 export { FieldsArrayForm, FormAuth, TypeAuth };

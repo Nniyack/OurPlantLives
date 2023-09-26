@@ -26,6 +26,7 @@ export default function (): { user: any, registerUser: any, signInUser: any } {
     console.log('signInUser')
     try {
       const userCreds = await signInWithEmailAndPassword($auth, email, password)
+      console.log(userCreds)
       if (userCreds) {
         user.value = userCreds.user
         return true
