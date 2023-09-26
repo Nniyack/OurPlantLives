@@ -1,8 +1,7 @@
 <template>
-  <section class="h-screen w-screen">
+  <section ref="headBand" class="h-screen w-screen min-w-full min-h-full">
     <div class="container-full">
       <div
-        ref="headBand"
         class="font-bold left-[6%] sm:top-0 lg:pt-[200px] flex flex-col w-full delay-200"
       >
         <div
@@ -32,16 +31,17 @@
         </div>
         <div v-if="targetIsVisible">
           <NuxtImg
-            src="../../assets/animate/plant-1-moved.png"
+            src="../../assets/animate/plant-1.png"
             class="absolute bottom-0 right-0"
             preload
             format="png"
             height="400"
             width="400"
+            @load="doSomethingOnLoad"
           />
           <NuxtImg
             src="../../assets/animate/plant-2.png"
-            class="absolute top-0 left-[300px]"
+            class="absolute top-0 left-[300px] z-10"
             height="60"
             width="60"
             preload
@@ -88,7 +88,6 @@
 <script lang="ts">
   import { defineComponent, ref, watch } from "vue";
   import type { Ref } from "vue";
-  import { useWindowSize, useWindowScroll } from "@vueuse/core";
   import { useElementVisibility } from "@vueuse/core";
 
   import type { TypeAuth } from "../../types/forms";
@@ -98,25 +97,25 @@
       const headBand = ref(null);
       const showModal: Ref<Boolean> = ref(false);
       const typeAuth: Ref<TypeAuth> = ref(null);
-      const { x, y } = useWindowScroll();
-      const { width, height } = useWindowSize();
       const targetIsVisible = useElementVisibility(headBand);
+      // watch(targetIsVisible, () => {
+      //   console.log("ok");
+      // });
       const openModal = (show: any, type: any) => {
         showModal.value = show;
         typeAuth.value = type;
       };
-      watch(targetIsVisible, () => {
-        console.log("scroll", width, height);
-      });
-      // watch(y, () => {
-      //   console.log("scroll", x.value, y.value);
-      // });
-      // console.log(width, height);
-      watch(y, () => {
-        console.log("scroll", x.value, y.value);
-      });
-
-      return { showModal, typeAuth, openModal, headBand, targetIsVisible };
+      const doSomethingOnLoad = (event: any) => {
+        console.log(event);
+      };
+      return {
+        showModal,
+        typeAuth,
+        openModal,
+        headBand,
+        targetIsVisible,
+        doSomethingOnLoad,
+      };
     },
   });
 </script>
