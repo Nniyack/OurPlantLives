@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="p-5 block lg:flex items-center justify-between flex-wrap bg-transparent"
+    class="p-5 block lg:flex items-center justify-between flex-wrap bg-transparent nav-bar-animation"
   >
     <div
       class="min-w-[30%] basis-6 items-center lg:mt-0 mr-6 text-2xl text-green-design-1 font-extrabold pl-3"
@@ -58,4 +58,15 @@
 </script>
 
 <style  scoped>
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(-300%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.nav-bar-animation {
+  animation: 1s ease-out 0s 1 slideInFromBottom;
+}
 </style>
