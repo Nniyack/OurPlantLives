@@ -183,6 +183,7 @@
       };
 
       const handleCLick = (name: string) => {
+        errorMsg.value = "";
         selectType.type(name);
       };
 
@@ -191,16 +192,14 @@
       };
 
       const formValidate = async (values: any) => {
-        if (selectType.subscribe)
-          await registerUser(values.email, values.password);
-        if (selectType.connexion)
-          await signInUser(values.email, values.password)
-            .then((e: any) => {
-              console.log(e);
-            })
-            .catch((error: any) => {
-              errorMsg.value = error.message;
-            });
+        try {
+          if (selectType.subscribe)
+            await registerUser(values.email, values.password);
+          if (selectType.connexion)
+            await signInUser(values.email, values.password);
+        } catch (error: any) {
+          errorMsg.value = error.message;
+        }
       };
 
       return {

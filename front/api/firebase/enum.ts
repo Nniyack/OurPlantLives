@@ -4,6 +4,9 @@ const errors: any = {
   },
   'auth/wrong-password': {
     message: "Mot de passe incorrect "
+  },
+  'auth/email-already-in-use': {
+    message: "Cet email est déja utilisé"
   }
 }
 
