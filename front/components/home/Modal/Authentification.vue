@@ -170,6 +170,7 @@
       });
 
       const { registerUser, signInUser }: any = useFirebaseAuth();
+      const { addToFirestore }: any = useFirebaseHttps();
 
       watch(props, () => {
         selectType.type(props.typeAuth);
@@ -197,6 +198,7 @@
             await registerUser(values.email, values.password);
           if (selectType.connexion)
             await signInUser(values.email, values.password);
+          addToFirestore();
         } catch (error: any) {
           errorMsg.value = error.message;
         }
