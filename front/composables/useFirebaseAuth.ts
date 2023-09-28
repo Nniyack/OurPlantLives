@@ -6,12 +6,12 @@ export default function (): { user: any, registerUser: any, signInUser: any } {
   const user = useState<User | null>("fb_user", () => null)
 
   const registerUser = async (email: string, password: string): Promise<any> => {
-    await createUserWithEmailAndPassword($auth, email, password)
+    return await createUserWithEmailAndPassword($auth, email, password)
       .then((response) => {
         user.value = response.user;
         return response
       })
-      .catch((error) => { console.log(error); throw new Error(errors[error.code].message); }
+      .catch((error) => { throw new Error(errors[error.code].message); }
 
       )
   }

@@ -66,13 +66,18 @@
                   </div>
                   <hr />
                   <div
-                    v-if="errorMsg !== ''"
-                    class="flex bg-red-200 p-5 mt-4 rounded-md border-2 border border-red-400"
+                    v-if="alert.msg !== ''"
+                    :class="`flex bg-${alert.color}-200 p-5 mt-4 rounded-md border-2 border border-${alert.color}-400`"
                   >
                     <ExclamationTriangleIcon
-                      class="h-6 w-6 text-red-800 mr-3"
+                      v-if="alert.color === 'red'"
+                      class="h-6 w-6 text-red-800 mx-3"
                     />
-                    <span class="text-slate-700 text-sm">{{ errorMsg }}</span>
+                    <CheckCircleIcon
+                      v-if="alert.color === 'green'"
+                      class="h-6 w-6 text-green-8 mx-3"
+                    />
+                    <span class="text-slate-700 text-sm">{{ alert.msg }}</span>
                   </div>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
@@ -126,6 +131,7 @@
   import {
     UserCircleIcon,
     ExclamationTriangleIcon,
+    CheckCircleIcon,
   } from "@heroicons/vue/24/outline";
   import {
     subscribeFormSchema,
@@ -139,11 +145,20 @@
     validBtnLabel: String;
     type(name: String): void;
   }
+  type Color = "green" | "red";
+
+  interface Alert {
+    msg: String;
+    color: Color;
+    params(error: Boolean, msg: String): void;
+    reset(): void;
+  }
 
   export default defineComponent({
     components: {
       UserCircleIcon,
       ExclamationTriangleIcon,
+      CheckCircleIcon,
       Form,
       Field,
       ErrorMessage,
@@ -154,7 +169,19 @@
     },
     setup(props: any, context: any) {
       const isSubmit: Ref<Boolean> = ref(false);
-      const errorMsg: Ref<String> = ref("");
+      let alert: Alert = reactive({
+        msg: "",
+        color: "",
+        params: function (this: any, error: boolean, msg: string): void {
+          this.color = error ? "red" : "green";
+          this.msg = msg;
+        },
+        reset: function (): void {
+          this.msg = "";
+          this.color = "";
+        },
+      });
+
       let selectType: TypeAuthFct = reactive({
         connexion: false,
         subscribe: false,
@@ -184,7 +211,7 @@
       };
 
       const handleCLick = (name: string) => {
-        errorMsg.value = "";
+        alert.reset();
         selectType.type(name);
       };
 
@@ -195,12 +222,24 @@
       const formValidate = async (values: any) => {
         try {
           if (selectType.subscribe)
-            await registerUser(values.email, values.password);
+            await registerUser(values.email, values.password).then(
+              (response: any) => {
+                console.log("response", response);
+                addToFirestore("users", {
+                  email: values.email,
+                  firstname: values.firstname,
+                  lastname: values.lastname,
+                  uid: response.user.uid,
+                }).then(() => {
+                  alert.params(false, "Bienvenue sur OurLivesPlants");
+                  console.log(alert);
+                });
+              }
+            );
           if (selectType.connexion)
             await signInUser(values.email, values.password);
-          addToFirestore();
         } catch (error: any) {
-          errorMsg.value = error.message;
+          alert.params(true, error.message);
         }
       };
 
@@ -214,7 +253,7 @@
         handleCLick,
         selectType,
         schemaType,
-        errorMsg,
+        alert,
       };
     },
   });
