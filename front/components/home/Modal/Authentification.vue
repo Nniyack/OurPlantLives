@@ -66,18 +66,20 @@
                   </div>
                   <hr />
                   <div
-                    v-if="alert.msg !== ''"
-                    :class="`flex bg-${alert.color}-200 p-5 mt-4 rounded-md border-2 border border-${alert.color}-400`"
+                    v-if="color !== null"
+                    :class="`flex bg-${newColor}-200 p-5 mt-4 rounded-md border-2 border border-${newColor}-400`"
                   >
                     <ExclamationTriangleIcon
-                      v-if="alert.color === 'red'"
+                      v-if="color === 'red'"
                       class="h-6 w-6 text-red-800 mx-3"
                     />
                     <CheckCircleIcon
-                      v-if="alert.color === 'green'"
+                      v-if="color === 'green'"
                       class="h-6 w-6 text-green-8 mx-3"
                     />
-                    <span class="text-slate-700 text-sm">{{ alert.msg }}</span>
+                    <span class="text-slate-700 text-sm pt-1">{{
+                      message
+                    }}</span>
                   </div>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
@@ -128,6 +130,7 @@
 <script lang="ts">
   import { defineComponent, ref, PropType, watch, computed, reactive } from "vue";
   import { Form, Field, ErrorMessage } from "vee-validate";
+  import { userStore } from "../../../stores/authentification";
   import {
     UserCircleIcon,
     ExclamationTriangleIcon,
@@ -145,14 +148,7 @@
     validBtnLabel: String;
     type(name: String): void;
   }
-  type Color = "green" | "red";
-
-  interface Alert {
-    msg: String;
-    color: Color;
-    params(error: Boolean, msg: String): void;
-    reset(): void;
-  }
+  type Color = "green" | "red" | null;
 
   export default defineComponent({
     components: {
@@ -169,17 +165,10 @@
     },
     setup(props: any, context: any) {
       const isSubmit: Ref<Boolean> = ref(false);
-      let alert: Alert = reactive({
-        msg: "",
-        color: "",
-        params: function (this: any, error: boolean, msg: string): void {
-          this.color = error ? "red" : "green";
-          this.msg = msg;
-        },
-        reset: function (): void {
-          this.msg = "";
-          this.color = "";
-        },
+      const color: Ref<Color> = ref(null);
+      const message: Ref<String | null> = ref(null);
+      const newColor = computed(() => {
+        return color.value;
       });
 
       let selectType: TypeAuthFct = reactive({
@@ -195,9 +184,7 @@
             (isSubscribe && "S'inscrire") || (isConnexion && "Connexion");
         },
       });
-
-      const { registerUser, signInUser }: any = useFirebaseAuth();
-      const { addToFirestore }: any = useFirebaseHttps();
+      const store = userStore();
 
       watch(props, () => {
         selectType.type(props.typeAuth);
@@ -211,7 +198,7 @@
       };
 
       const handleCLick = (name: string) => {
-        alert.reset();
+        color.value = null;
         selectType.type(name);
       };
 
@@ -222,24 +209,19 @@
       const formValidate = async (values: any) => {
         try {
           if (selectType.subscribe)
-            await registerUser(values.email, values.password).then(
-              (response: any) => {
-                console.log("response", response);
-                addToFirestore("users", {
-                  email: values.email,
-                  firstname: values.firstname,
-                  lastname: values.lastname,
-                  uid: response.user.uid,
-                }).then(() => {
-                  alert.params(false, "Bienvenue sur OurLivesPlants");
-                  console.log(alert);
-                });
-              }
-            );
+            store.registerUser(values).then((res: [boolean, string]) => {
+              color.value = res[0] ? "red" : "green";
+              message.value = res[1];
+            });
           if (selectType.connexion)
-            await signInUser(values.email, values.password);
+            await store
+              .signInUser(values.email, values.password)
+              .catch((res: [boolean, string]) => {
+                color.value = res[0] ? "red" : "green";
+                message.value = res[1];
+              });
         } catch (error: any) {
-          alert.params(true, error.message);
+          // alert.params(true, error.message);
         }
       };
 
@@ -253,7 +235,9 @@
         handleCLick,
         selectType,
         schemaType,
-        alert,
+        message,
+        color,
+        newColor,
       };
     },
   });

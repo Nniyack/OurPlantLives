@@ -7,7 +7,10 @@ const errors: any = {
   },
   'auth/email-already-in-use': {
     message: "Cet email est déja utilisé"
-  }
+  },
+  'auth/invalid-email': {
+    message: "Cet email n'est pas conforme"
+  },
 }
 
 export { errors }
