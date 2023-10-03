@@ -1,6 +1,6 @@
 <template>
   <div class="w-full index-content">
-    <div class="line-container">
+    <!-- <div class="line-container">
       <svg
         v-show="showSvg"
         viewBox="0 0 2481 3508"
@@ -13,7 +13,7 @@
           style="fill: none; stroke: black; stroke-width: 8.33px"
         />
       </svg>
-    </div>
+    </div> -->
 
     <HomeHeadBand />
     <HomeDescription />
@@ -25,35 +25,36 @@
 
   export default defineComponent({
     setup() {
-      const showSvg: Ref<Boolean> = ref(false);
-      const pathSvg: Ref<any> = ref();
-      onMounted(() => {
-        console.log(pathSvg);
-        showSvg.value = true;
-        if (pathSvg !== null) {
-          var pathLength = pathSvg.value.getTotalLength();
-          console.log(typeof pathLength);
-          pathSvg.value.style.strokeDasharray = pathLength + "  " + pathLength;
-          pathSvg.value.style.strokeDashoffset = String(pathLength);
-        }
-        window.addEventListener("scroll", () => {
-          var scrollPercentage =
-            (document.documentElement.scrollTop +
-              Number(document.body.scrollTop)) /
-            (document.documentElement.scrollHeight +
-              document.documentElement.clientHeight);
+      // const showSvg: Ref<Boolean> = ref(false);
+      // const pathSvg: Ref<any> = ref();
+      // onMounted(() => {
+      //   console.log(pathSvg);
+      //   showSvg.value = true;
+      //   if (pathSvg !== null) {
+      //     var pathLength = pathSvg.value.getTotalLength();
+      //     console.log(typeof pathLength);
+      //     pathSvg.value.style.strokeDasharray = pathLength + "  " + pathLength;
+      //     pathSvg.value.style.strokeDashoffset = String(pathLength);
+      //   }
+      //   window.addEventListener("scroll", () => {
+      //     var scrollPercentage =
+      //       (document.documentElement.scrollTop +
+      //         Number(document.body.scrollTop)) /
+      //       (document.documentElement.scrollHeight +
+      //         document.documentElement.clientHeight);
 
-          var drawLength = pathLength * scrollPercentage;
+      //     var drawLength = pathLength * scrollPercentage;
 
-          if (pathSvg !== null) {
-            pathSvg.value.style.strokeDashoffset = String(
-              pathLength - drawLength
-            );
-          }
-        });
-      });
+      //     if (pathSvg !== null) {
+      //       pathSvg.value.style.strokeDashoffset = String(
+      //         pathLength - drawLength
+      //       );
+      //     }
+      //   });
+      // });
 
-      return { pathSvg, showSvg };
+      // return { pathSvg, showSvg };
+      return {};
     },
   });
 </script>
