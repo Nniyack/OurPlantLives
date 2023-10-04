@@ -1,6 +1,6 @@
 // const { registerUser, signInUser }: any = useFirebaseAuth();
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
 import { errors } from "../api/firebase/enum"
 
 export const userStore = defineStore('auth', () => {
@@ -37,11 +37,19 @@ export const userStore = defineStore('auth', () => {
       )
     // );
   }
-
+  async function fetchUser(): Promise<any> {
+    $auth.onAuthStateChanged(async (user: null) => {
+      if (user === null) {
+        console.log('nok')
+      } else {
+        console.log(user)
+      }
+    });
+  }
   // function logoutUser() {
   //   token.value++
   // }
 
 
-  return { user, error, registerUser, signInUser }
+  return { user, error, registerUser, signInUser, fetchUser }
 })
