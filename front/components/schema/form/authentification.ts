@@ -18,7 +18,21 @@ const subscribeFormSchema: FieldsArrayForm = {
       label: "Email *",
       name: "email",
       as: "input",
-      rules: yup.string().email("Email invalide").required("Champ requis"),
+      rules: yup.string().email("Email invalide").required("Champ requis").test({
+        name: "is-psw",
+        skipAbsent: true,
+        test(value, ctx) {
+          const format = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+          if (!value.match(format)) {
+            return ctx.createError({
+              message:
+                "Email invalide",
+            });
+          }
+
+          return true;
+        },
+      }),
     },
     {
       label: "Mot de passe *",
