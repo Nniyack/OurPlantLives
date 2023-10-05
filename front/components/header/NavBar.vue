@@ -25,6 +25,48 @@
         ASTUCES
       </NuxtLink>
     </div>
+    <CoreCustomMenu
+      v-if="userIsConnected"
+      name="avatar"
+      class="absolute top-2 right-4"
+    >
+      <template v-slot:button="{ onClick }"
+        ><div
+          @click="onClick"
+          class="invisible sm:invisible md:invisible lg:visible bg-slate-300 border-2 border-red-salmon-design-1 h-[50px] w-[50px] rounded-full cursor-pointer"
+        ></div>
+      </template>
+      <template v-slot:panel>
+        <div
+          class="p-3 border border-slate-300 rounded absolute right-1 mt-1 select-none shadow-md"
+        >
+          <div class="border-bottom-2 w-[150px] pb-2 pt-3 flex items-center">
+            <UserCircleIcon class="h-8 w-8 text-green-design-1 mr-3" />
+            <p class="text-green-design-1">Yannick</p>
+          </div>
+          <hr class="my-2" />
+          <ul class="text-slate-600 mb-2 text-sm">
+            <li
+              class="py-3 pl-2 cursor-pointer hover:bg-slate-100 hover:text-slate-600"
+            >
+              Profil
+            </li>
+            <li
+              class="py-3 pl-2 cursor-pointer hover:bg-slate-100 hover:text-slate-600"
+            >
+              Paramètres
+            </li>
+          </ul>
+          <hr class="my-2" />
+          <div
+            @click="logoutUser"
+            class="text-center text-red-400 underline underline-offset-1 cursor-pointer"
+          >
+            Déconnexion
+          </div>
+        </div>
+      </template>
+    </CoreCustomMenu>
     <div class="w-auto lg:w-80 lg:hidden">
       <button
         class="flex items-center px-3 py-2 md:mr-5 border rounded text-green-ui border-green-ui hover:text-green-kelly-ui hover:border-green-kelly-ui absolute top-4 right-11"
@@ -44,15 +86,39 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "vue";
+  import { defineComponent, Ref, ref, computed } from "vue";
+  import { UserCircleIcon } from "@heroicons/vue/24/outline";
+  import { userStore } from "../../stores/authentification";
 
   export default defineComponent({
+    name: "navBar",
+    components: {
+      UserCircleIcon,
+    },
     setup() {
-      const isShow = ref(false);
+      const store = userStore();
+      const isShow: Ref<boolean> = ref(false);
+      const isShowAvatarMenu: Ref<boolean> = ref(false);
+      const openAvatarMenu = (): void => {
+        isShowAvatarMenu.value = !isShowAvatarMenu.value;
+      };
+      const userIsConnected = computed(() => {
+        return store.user !== null;
+      });
       const openMenu = (): void => {
         isShow.value = !isShow.value;
       };
-      return { openMenu, isShow };
+      const logoutUser = (): void => {
+        store.signOutUser();
+      };
+      return {
+        openMenu,
+        isShow,
+        isShowAvatarMenu,
+        openAvatarMenu,
+        logoutUser,
+        userIsConnected,
+      };
     },
   });
 </script>
