@@ -26,7 +26,7 @@
       </NuxtLink>
     </div>
     <CoreCustomMenu
-      v-if="userIsConnected"
+      :show="userIsConnected"
       name="avatar"
       class="absolute top-2 right-4"
     >
@@ -98,10 +98,6 @@
     setup() {
       const store = userStore();
       const isShow: Ref<boolean> = ref(false);
-      const isShowAvatarMenu: Ref<boolean> = ref(false);
-      const openAvatarMenu = (): void => {
-        isShowAvatarMenu.value = !isShowAvatarMenu.value;
-      };
       const userIsConnected = computed(() => {
         return store.user !== null;
       });
@@ -114,8 +110,6 @@
       return {
         openMenu,
         isShow,
-        isShowAvatarMenu,
-        openAvatarMenu,
         logoutUser,
         userIsConnected,
       };
