@@ -66,20 +66,22 @@
                   </div>
                   <hr />
                   <div
-                    v-if="color !== null"
-                    :class="`flex bg-${newColor}-200 p-5 mt-4 rounded-md border-2 border border-${newColor}-400`"
+                    v-if="error !== null"
+                    :class="[error ? 'error' : 'done']"
                   >
-                    <ExclamationTriangleIcon
-                      v-if="color === 'red'"
-                      class="h-6 w-6 text-red-800 mx-3"
-                    />
-                    <CheckCircleIcon
-                      v-if="color === 'green'"
-                      class="h-6 w-6 text-green-8 mx-3"
-                    />
-                    <span class="text-slate-700 text-sm pt-1">{{
-                      message
-                    }}</span>
+                    <div class="p-5 flex">
+                      <ExclamationTriangleIcon
+                        v-if="error"
+                        class="h-6 w-6 text-red-800 mx-3"
+                      />
+                      <CheckCircleIcon
+                        v-if="!error"
+                        class="h-6 w-6 text-green-8 mx-3"
+                      />
+                      <span class="text-slate-700 text-sm pt-1">{{
+                        message
+                      }}</span>
+                    </div>
                   </div>
                   <div class="mt-5 grid grid-cols-1 gap-4 text-sm">
                     <div>
@@ -148,7 +150,7 @@
     validBtnLabel: String;
     type(name: String): void;
   }
-  type Color = "green" | "red" | null;
+  type Color = boolean | null;
 
   export default defineComponent({
     components: {
@@ -163,14 +165,10 @@
       show: Boolean as PropType<Boolean>,
       typeAuth: String as PropType<TypeAuth>,
     },
-    setup(props: any, context: any) {
+    setup(props: any) {
       const isSubmit: Ref<Boolean> = ref(false);
-      const color: Ref<Color> = ref(null);
+      const error: Ref<boolean | null> = ref(null);
       const message: Ref<String | null> = ref(null);
-      const newColor = computed(() => {
-        return color.value;
-      });
-
       let selectType: TypeAuthFct = reactive({
         connexion: false,
         subscribe: false,
@@ -198,7 +196,7 @@
       };
 
       const handleCLick = (name: string) => {
-        color.value = null;
+        error.value = null;
         selectType.type(name);
       };
 
@@ -210,14 +208,15 @@
         try {
           if (selectType.subscribe)
             store.registerUser(values).then((res: [boolean, string]) => {
-              color.value = res[0] ? "red" : "green";
+              error.value = res[0];
               message.value = res[1];
             });
           if (selectType.connexion)
             await store
               .signInUser(values.email, values.password)
               .catch((res: [boolean, string]) => {
-                color.value = res[0] ? "red" : "green";
+                error.value = res[0];
+
                 message.value = res[1];
               });
         } catch (error: any) {
@@ -236,12 +235,21 @@
         selectType,
         schemaType,
         message,
-        color,
-        newColor,
+        error,
       };
     },
   });
 </script>
 
 <style scoped>
+.error {
+  border-radius: 5px;
+  border: 1px solid rgb(183, 82, 82);
+  background-color: rgb(232, 195, 195);
+}
+.done {
+  border-radius: 5px;
+  border: 1px solid rgb(71, 134, 71);
+  background-color: rgb(191, 222, 191);
+}
 </style>
