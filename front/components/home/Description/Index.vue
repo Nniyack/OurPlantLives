@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen h-screen border-2 border-rose-600"></div>
+  <div class="border-2 border-rose-600"></div>
 </template>
 
 <script lang="ts">

@@ -33,7 +33,7 @@
       <template v-slot:button="{ onClick }"
         ><div
           @click="onClick"
-          class="invisible sm:invisible md:invisible lg:visible bg-slate-300 border-2 border-red-salmon-design-1 h-[50px] w-[50px] rounded-full cursor-pointer"
+          class="invisible sm:invisible md:invisible lg:visible bg-green-design-1 border-2 border-red-salmon-design-1 h-[50px] w-[50px] rounded-full cursor-pointer"
         ></div>
       </template>
       <template v-slot:panel>
@@ -45,7 +45,7 @@
             <p class="text-green-design-1">Yannick</p>
           </div>
           <hr class="my-2" />
-          <ul class="text-slate-600 mb-2 text-sm">
+          <ul class="text-slate-600 mb-2 text-base">
             <li
               class="py-3 pl-2 cursor-pointer hover:bg-slate-100 hover:text-slate-600"
             >

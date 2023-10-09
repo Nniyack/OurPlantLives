@@ -1,5 +1,5 @@
 <template>
-  <section ref="headBand" class="h-screen w-screen min-w-full min-h-full">
+  <section ref="headBand" class="">
     <div class="container-full">
       <div
         class="font-bold left-[6%] sm:top-0 lg:pt-[200px] flex flex-col w-full delay-200"

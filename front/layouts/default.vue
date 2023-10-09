@@ -3,7 +3,7 @@
     <HeaderNavBar />
     <!-- <Alert type="error" :htmlText="testNode" /> -->
     <slot />
-    <Footer />
+    <Footer v-if="!isIndex" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@
       const route = useRoute();
       const testNode = h("div", [h("i", "hello")]);
       console.log(route.name);
-      return { testNode, isIndex: route.name };
+      return { testNode, isIndex: route.name === "index" };
     },
   });
 </script>
