@@ -5,7 +5,7 @@ import { errors } from "../api/firebase/enum"
 
 export const userStore = defineStore('auth', () => {
   const { $auth }: any = useNuxtApp()
-  const { add }: any = useFirebaseHttps();
+  const { add, getDocByField }: any = useFirebaseHttps();
   const user = useState<User | null>("fb_user", () => null)
   const error: Ref<String | null> = ref(null)
 
@@ -43,13 +43,14 @@ export const userStore = defineStore('auth', () => {
   }
 
   async function fetchUser(): Promise<any> {
+    console.log($auth)
     $auth.onAuthStateChanged(async (userData: null) => {
       if (userData === null) {
         console.log('nouser', userData)
         clearUser()
       } else {
+        getDocByField("users", "uid", userData.uid);
         user.value = userData
-        console.log(user.value)
       }
     });
   }
