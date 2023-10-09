@@ -7,6 +7,7 @@ export const userStore = defineStore('auth', () => {
   const { $auth }: any = useNuxtApp()
   const { add, getDocByField }: any = useFirebaseHttps();
   const user = useState<User | null>("fb_user", () => null)
+  const userProfil: Ref<Object | null> = ref({})
   const error: Ref<String | null> = ref(null)
 
   async function signInUser(email: string, password: string): Promise<any> {
@@ -40,6 +41,7 @@ export const userStore = defineStore('auth', () => {
 
   function clearUser() {
     user.value = null;
+    userProfil.value = null;
   }
 
   async function fetchUser(): Promise<any> {
@@ -49,8 +51,8 @@ export const userStore = defineStore('auth', () => {
         console.log('nouser', userData)
         clearUser()
       } else {
-        getDocByField("users", "uid", userData.uid);
-        user.value = userData
+        userProfil.value = await getDocByField("users", "uid", userData.uid);
+        user.value = await userData;
       }
     });
   }
