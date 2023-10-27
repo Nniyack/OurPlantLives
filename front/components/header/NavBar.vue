@@ -8,6 +8,7 @@
       <NuxtLink to="/"> OurPlantLives </NuxtLink>
     </div>
     <div
+      v-if="userIsConnected"
       :class="` block grow justify-evenly lg:pl-0 pl-3 lg:pt-0 pt-4 lg:flex lg:visible lg:pr-40 font-medium text-green-design-2 w-auto ${
         isShow ? 'visible' : 'hidden'
       }`"
@@ -97,6 +98,7 @@
     },
     setup() {
       const store = userStore();
+      const router = useRouter();
       const isShow: Ref<boolean> = ref(false);
       const userIsConnected = computed(() => {
         return store.user !== null;
@@ -106,7 +108,9 @@
       };
       const logoutUser = (): void => {
         store.signOutUser();
+        navigateTo("/");
       };
+      console.log(router);
       return {
         openMenu,
         isShow,

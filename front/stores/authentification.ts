@@ -45,16 +45,15 @@ export const userStore = defineStore('auth', () => {
   }
 
   async function fetchUser(): Promise<any> {
-    console.log($auth)
-    $auth.onAuthStateChanged(async (userData: null) => {
+    return await $auth?.onAuthStateChanged(async (userData: null) => {
       if (userData === null) {
-        console.log('nouser', userData)
         clearUser()
       } else {
         userProfil.value = await getDocByField("users", "uid", userData.uid);
         user.value = await userData;
       }
-    });
+    })
+
   }
 
   function signOutUser() {
@@ -64,9 +63,6 @@ export const userStore = defineStore('auth', () => {
       throw new Error('Sign out error', error);
     });
   }
-
-
-
 
   return { user, error, registerUser, signInUser, fetchUser, signOutUser }
 })

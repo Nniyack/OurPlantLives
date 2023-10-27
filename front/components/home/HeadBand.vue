@@ -74,6 +74,7 @@
             :show="showModal"
             :typeAuth="typeAuth"
             @close="showModal = false"
+            @isConnected="closeWhenConnected($event)"
           >
             <template #header>
               <h3>custom header</h3>
@@ -108,6 +109,9 @@
       const doSomethingOnLoad = (event: any) => {
         console.log(event);
       };
+      const closeWhenConnected = (connected: boolean) => {
+        if (connected) showModal.value = false;
+      };
       return {
         showModal,
         typeAuth,
@@ -115,6 +119,7 @@
         headBand,
         targetIsVisible,
         doSomethingOnLoad,
+        closeWhenConnected,
       };
     },
   });

@@ -10,13 +10,13 @@
 
   export default defineComponent({
     setup() {
-      const route = useRoute();
-      const store = userStore();
-      console.log(route.name);
-      onBeforeMount(() => {
-        store.fetchUser();
-      });
-      return {};
+      const router = useRouter();
+      // const route = useRoute();
+      // const Store = userStore();
+
+      // console.log(route.name);
+      // onBeforeMount(() => {});
+      // return {};
     },
   });
 </script>

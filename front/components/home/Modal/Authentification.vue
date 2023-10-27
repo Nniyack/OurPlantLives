@@ -9,7 +9,7 @@
     leave-to-class="opacity-0"
   >
     <div
-      v-if="show"
+      v-if="show && isShow"
       class="relative z-20"
       aria-labelledby="modal-title"
       role="dialog"
@@ -165,10 +165,11 @@
       show: Boolean as PropType<Boolean>,
       typeAuth: String as PropType<TypeAuth>,
     },
-    setup(props: any) {
+    setup(props: any, { emit }) {
       const isSubmit: Ref<Boolean> = ref(false);
       const error: Ref<boolean | null> = ref(null);
       const message: Ref<String | null> = ref(null);
+      const isShow: Ref<boolean> = ref(true);
       let selectType: TypeAuthFct = reactive({
         connexion: false,
         subscribe: false,
@@ -214,9 +215,11 @@
           if (selectType.connexion)
             await store
               .signInUser(values.email, values.password)
+              .then((res) => {
+                if (typeof res === "object") emit("isConnected", true);
+              })
               .catch((res: [boolean, string]) => {
                 error.value = res[0];
-
                 message.value = res[1];
               });
         } catch (error: any) {
@@ -236,6 +239,7 @@
         schemaType,
         message,
         error,
+        isShow,
       };
     },
   });
